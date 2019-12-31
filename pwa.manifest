@@ -1,0 +1,8 @@
+{
+  "name": "Kana",
+  "short_name": "HackerWeb",
+  "start_url": "/kana.html",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "A simply readable Hacker News app.",
+}

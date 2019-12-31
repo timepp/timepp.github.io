@@ -1,0 +1,56 @@
+
+/* ::::: null ::::: */
+
+p.MsoNormal, li.MsoNormal, div.MsoNormal { margin: 0cm 0cm 10pt; line-height: 115%; font-size: 11pt; font-family: "Calibri","sans-serif"; }
+h1 { margin: 24pt 0cm 10pt; line-height: 115%; page-break-after: avoid; font-size: 14pt; font-family: "Cambria","serif"; color: rgb(54, 95, 145); font-weight: bold; }
+h2 { margin: 10pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 13pt; font-family: "Cambria","serif"; color: rgb(79, 129, 189); font-weight: bold; }
+h3 { margin: 10pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 11pt; font-family: "Cambria","serif"; color: rgb(79, 129, 189); font-weight: bold; }
+h4 { margin: 10pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 11pt; font-family: "Cambria","serif"; color: rgb(79, 129, 189); font-weight: bold; font-style: italic; }
+h5 { margin: 10pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 11pt; font-family: "Cambria","serif"; color: rgb(36, 63, 96); font-weight: normal; }
+h6 { margin: 10pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 11pt; font-family: "Cambria","serif"; color: rgb(36, 63, 96); font-weight: normal; font-style: italic; }
+p.MsoHeading7, li.MsoHeading7, div.MsoHeading7 { margin: 10pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 11pt; font-family: "Cambria","serif"; color: rgb(64, 64, 64); font-style: italic; }
+p.MsoHeading8, li.MsoHeading8, div.MsoHeading8 { margin: 10pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 10pt; font-family: "Cambria","serif"; color: rgb(79, 129, 189); }
+p.MsoHeading9, li.MsoHeading9, div.MsoHeading9 { margin: 10pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 10pt; font-family: "Cambria","serif"; color: rgb(64, 64, 64); font-style: italic; }
+p.MsoCaption, li.MsoCaption, div.MsoCaption { margin: 0cm 0cm 10pt; line-height: normal; font-size: 9pt; font-family: "Calibri","sans-serif"; color: rgb(79, 129, 189); font-weight: bold; }
+p.MsoTitle, li.MsoTitle, div.MsoTitle { border: medium none ; margin: 0cm 0cm 15pt; padding: 0cm; line-height: normal; font-size: 26pt; font-family: "Cambria","serif"; color: rgb(23, 54, 93); letter-spacing: 0.25pt; }
+p.MsoTitleCxSpFirst, li.MsoTitleCxSpFirst, div.MsoTitleCxSpFirst { border: medium none ; margin: 0cm 0cm 0.0001pt; padding: 0cm; line-height: normal; font-size: 26pt; font-family: "Cambria","serif"; color: rgb(23, 54, 93); letter-spacing: 0.25pt; }
+p.MsoTitleCxSpMiddle, li.MsoTitleCxSpMiddle, div.MsoTitleCxSpMiddle { border: medium none ; margin: 0cm 0cm 0.0001pt; padding: 0cm; line-height: normal; font-size: 26pt; font-family: "Cambria","serif"; color: rgb(23, 54, 93); letter-spacing: 0.25pt; }
+p.MsoTitleCxSpLast, li.MsoTitleCxSpLast, div.MsoTitleCxSpLast { border: medium none ; margin: 0cm 0cm 15pt; padding: 0cm; line-height: normal; font-size: 26pt; font-family: "Cambria","serif"; color: rgb(23, 54, 93); letter-spacing: 0.25pt; }
+p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle { margin: 0cm 0cm 10pt; line-height: 115%; font-size: 12pt; font-family: "Cambria","serif"; color: rgb(79, 129, 189); letter-spacing: 0.75pt; font-style: italic; }
+a:link, span.MsoHyperlink { color: blue; text-decoration: underline; }
+a:visited, span.MsoHyperlinkFollowed { color: purple; text-decoration: underline; }
+p { margin-right: 0cm; margin-left: 0cm; line-height: 115%; font-size: 12pt; font-family: 宋体; }
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate { margin: 0cm 0cm 10pt; line-height: 115%; font-size: 8pt; font-family: "Calibri","sans-serif"; }
+p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing { margin: 0cm 0cm 0.0001pt; line-height: normal; font-size: 11pt; font-family: "Calibri","sans-serif"; }
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph { margin: 0cm 0cm 10pt 36pt; line-height: 115%; font-size: 11pt; font-family: "Calibri","sans-serif"; }
+p.MsoListParagraphCxSpFirst, li.MsoListParagraphCxSpFirst, div.MsoListParagraphCxSpFirst { margin: 0cm 0cm 0.0001pt 36pt; line-height: 115%; font-size: 11pt; font-family: "Calibri","sans-serif"; }
+p.MsoListParagraphCxSpMiddle, li.MsoListParagraphCxSpMiddle, div.MsoListParagraphCxSpMiddle { margin: 0cm 0cm 0.0001pt 36pt; line-height: 115%; font-size: 11pt; font-family: "Calibri","sans-serif"; }
+p.MsoListParagraphCxSpLast, li.MsoListParagraphCxSpLast, div.MsoListParagraphCxSpLast { margin: 0cm 0cm 10pt 36pt; line-height: 115%; font-size: 11pt; font-family: "Calibri","sans-serif"; }
+p.MsoQuote, li.MsoQuote, div.MsoQuote { margin: 0cm 0cm 10pt; line-height: 115%; font-size: 11pt; font-family: "Calibri","sans-serif"; color: black; font-style: italic; }
+p.MsoIntenseQuote, li.MsoIntenseQuote, div.MsoIntenseQuote { border: medium none ; margin: 10pt 46.8pt 14pt; padding: 0cm; line-height: 115%; font-size: 11pt; font-family: "Calibri","sans-serif"; color: rgb(79, 129, 189); font-weight: bold; font-style: italic; }
+span.MsoSubtleEmphasis { color: gray; font-style: italic; }
+span.MsoIntenseEmphasis { color: rgb(79, 129, 189); font-weight: bold; font-style: italic; }
+span.MsoSubtleReference { font-variant: small-caps; color: rgb(192, 80, 77); text-decoration: underline; }
+span.MsoIntenseReference { font-variant: small-caps; color: rgb(192, 80, 77); letter-spacing: 0.25pt; font-weight: bold; text-decoration: underline; }
+span.MsoBookTitle { font-variant: small-caps; letter-spacing: 0.25pt; font-weight: bold; }
+p.MsoTocHeading, li.MsoTocHeading, div.MsoTocHeading { margin: 24pt 0cm 0.0001pt; line-height: 115%; page-break-after: avoid; font-size: 14pt; font-family: "Cambria","serif"; color: rgb(54, 95, 145); font-weight: bold; }
+span.Heading1Char { font-family: "Cambria","serif"; color: rgb(54, 95, 145); font-weight: bold; }
+span.BalloonTextChar {  }
+span.Heading2Char { font-family: "Cambria","serif"; color: rgb(79, 129, 189); font-weight: bold; }
+span.Heading3Char { font-family: "Cambria","serif"; color: rgb(79, 129, 189); font-weight: bold; }
+span.Heading4Char { font-family: "Cambria","serif"; color: rgb(79, 129, 189); font-weight: bold; font-style: italic; }
+span.Heading5Char { font-family: "Cambria","serif"; color: rgb(36, 63, 96); }
+span.Heading6Char { font-family: "Cambria","serif"; color: rgb(36, 63, 96); font-style: italic; }
+span.Heading7Char { font-family: "Cambria","serif"; color: rgb(64, 64, 64); font-style: italic; }
+span.Heading8Char { font-family: "Cambria","serif"; color: rgb(79, 129, 189); }
+span.Heading9Char { font-family: "Cambria","serif"; color: rgb(64, 64, 64); font-style: italic; }
+span.TitleChar { font-family: "Cambria","serif"; color: rgb(23, 54, 93); letter-spacing: 0.25pt; }
+span.SubtitleChar { font-family: "Cambria","serif"; color: rgb(79, 129, 189); letter-spacing: 0.75pt; font-style: italic; }
+span.NoSpacingChar {  }
+span.QuoteChar { color: black; font-style: italic; }
+span.IntenseQuoteChar { color: rgb(79, 129, 189); font-weight: bold; font-style: italic; }
+.MsoChpDefault { font-size: 11pt; }
+.MsoPapDefault { margin-bottom: 10pt; line-height: 115%; }
+div.Section1 { page: Section1; }
+ol { margin-bottom: 0cm; }
+ul { margin-bottom: 0cm; }

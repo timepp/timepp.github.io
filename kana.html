@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>kana</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <link rel="manifest" href="pwa.manifest">
+
+    <script language="javascript">
+
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+
+      var kana = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+      //var kana = "あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわゐゑをんアイウエオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモヤユヨラリルレロワヰヱヲン";
+
+      function init() {
+          changeKana();
+          document.onclick = changeKana;
+      }
+
+      function changeKana() {
+          var index = Math.floor(Math.random() * kana.length);
+          var ch = kana.charAt(index);
+      
+          var content = document.getElementById("content");
+          content.innerText = ch;
+      }
+    </script>
+  </head>
+
+  <body onload="init()">
+    <div id="content" style="width:100%; font-size: 80vw; text-align:center; font-family:monospace">
+    </div>
+  </body>
+</html>

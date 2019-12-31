@@ -1,0 +1,24 @@
+pre,code {
+    font-family: Consolas, QingYuan;
+}
+body {
+    font-family: QingYuan;
+}
+h2 {
+    color: cornflowerblue;
+    border-bottom: 1px rgb(192, 64, 128) solid;
+}
+
+h1 {
+    border-bottom: none;
+}
+
+pre {
+    margin-left: 30px;
+    background-color: lime;
+}
+
+code {
+    margin-left: 2px;
+    margin-right: 2px;
+}

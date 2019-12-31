@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <script lang="javascript">
+      var linenumber = 0;
+      function addline() {
+        linenumber++;
+        var span = document.createElement("span");
+        span.appendChild(document.createTextNode("line " + linenumber));
+        document.body.appendChild(document.createElement("br"));
+        document.body.appendChild(span);
+      }
+    </script>
+  </head>
+  <body>
+    <span>links test:</span> <br/>
+    <a href="no_pull_refresh.html">no pull refresh test</a>
+    <a href="tel:15810374843">tel:15810374843</a> <br/>
+    <a href="tel:">tel:</a> <br />
+    <a href="1003516-999.swf">swf file</a><br/>
+    <a href="sd://e.stc-seedland.com.cn">SD url</a><br />
+    <a href="App1.apk">apk file</a><br/>
+    <a href="good.crx">crx file</a><br/>
+    <a href="gitignore.7z">7z file</a><br/>
+    <a href="classes.dex">dex file</a><br/>
+    <a href="small.pdf">pdf file</a><br/>
+    <a href="unit.111">111 file</a><br/>
+    <a href="a_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_file_name.7z">long file name</a>
+
+    <input type="file" accept="contacts">
+
+    <br />
+    <input type="button" value="Add Line" onclick="addline()">
+    
+  </body>
+</html>

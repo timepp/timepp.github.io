@@ -1,0 +1,16 @@
+.roofpig {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 60px;
+    background-color: #808080;
+    float: left;
+}
+
+.clearboth {
+    clear: both;
+}
+
+.note {
+    margin-left: 20px;
+    color: #808080;
+}

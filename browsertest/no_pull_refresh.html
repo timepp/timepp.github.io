@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body style="overscroll-behavior: contain">
+
+        Chrome 63 (released 5 December 2017) has added a css property to help out with exactly this. Have a read through this guide by Google to get a good idea of how you can handle it. 
+        Here is their TL:DR
+        The CSS overscroll-behavior property allows developers to override the browser's default overflow scroll behavior when reaching the top/bottom of content. Use cases include disabling the pull-to-refresh feature on mobile, removing overscroll glow and rubberbanding effects, and preventing page content from scrolling when it's beneath a modal/overlay.
+        To get it working, all you have to add is this in your CSS:
+        body {
+          overscroll-behavior: contain;
+        }
+        It is also only supported by Chrome, Edge and Firefox for now but I'm sure Safari will add it soon as they seem to be fully onboard with service workers and the future of PWA's.
+    
+  </body>
+</html>
