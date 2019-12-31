@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript">
+        function jump() {
+            // 短信点开链接后自动跳转功能测试
+            // chrome: 当应用启动中, 可以自动跳转, 否则不可以
+            // 华为浏览器: 总是弹窗提示是否自动跳转
+            window.location = "shidi://e.stc-seedland.com.cn";
+        }
+    </script>
+</head>
+
+<html>
+    <body onload="jump()">
+        <span>如果浏览器没有自动跳转, 请安装最新版APP并点击以下链接跳转</span><br /><br />
+        <a id="jumplink" href="shidi://e.stc-seedland.com.cn"> 打开APP </a>
+    </body>
+</html>
