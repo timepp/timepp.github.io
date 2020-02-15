@@ -32,12 +32,22 @@ function createPage(path) {
     return createManeuvers(select(maneuvers, path), path);
 }
 
+function createPanel(content, panelStyle, heading) {
+    var panel = $('<div>').addClass("card mb-3").addClass(panelStyle);
+    panel.append($('<div>').addClass("card-header").text(heading));
+    panel.append($('<div class="card-body">').append(content));
+    return panel;
+}
+
 function createManeuvers(obj, path) {
     if ("maneuvers" in obj) {
         return createCase(obj, path);
     }
 
     var $div = $("<div>");
+    if (obj.note) {
+        $div.append($("<div>").addClass("alert alert-info").html(obj.note.replace(/\n/g, "<br>")));
+    }
     for (var x in obj) {
         var child = obj[x];
         if (child === null || typeof child !== 'object') continue;
@@ -76,16 +86,19 @@ function createCase(c, path) {
     var lastBase = ensureRoofpigBaseConfigs(path);
     var baseconf = lastBase? "base=" + lastBase + " | " : "";
     
-    var $div = $("<div class='clearboth'>")
-        .append($("<p>")
+    var $div = $("<div class='clearboth'>");
+    if (c.description || c.note) {
+        $div.append($("<p>")
                 .append($("<span class='desc'>").text(c.description))
                 .append($("<span class='note'>").text(c.note)));
+    }
+
     for (var j in c.maneuvers) {
         var maneuver = c.maneuvers[j];
         $div.append($("<div>").addClass("roofpig").attr("data-config", baseconf + "alg=" + maneuver));
     }
-    $div.append($("<hr class='clearboth'>"));
-    return $div;
+
+    return createPanel($div, "border-info", path);
 }
 
 function createNav() {
@@ -157,9 +170,9 @@ function main() {
 
 // workaround
 //var ROOFPIG_CONF_F2L = maneuvers.F2L.roofpig_conf;
-window["ROOFPIG_CONF_F2L"] = maneuvers.F2L.roofpig_conf;
-var ROOFPIG_CONF_PLL = maneuvers.PLL.roofpig_conf;
-var ROOFPIG_CONF_ATOM = maneuvers.ATOM.roofpig_conf;
+//window["ROOFPIG_CONF_F2L"] = maneuvers.F2L.roofpig_conf;
+//var ROOFPIG_CONF_PLL = maneuvers.PLL.roofpig_conf;
+//var ROOFPIG_CONF_ATOM = maneuvers.ATOM.roofpig_conf;
 
 $(document).ready(function() {
     main();
