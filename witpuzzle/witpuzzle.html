@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    
+    <script type="module">
+        import SAW from "./saw.js"
+        import * as wp from "./main.js"
+        import {CanvasDrawer} from "./canvasdrawer.js"
+        let ctx = null;
+
+        window.onload = init
+
+        function init() {
+
+            let puzzle = new wp.Puzzle(4, 4)
+            puzzle.generate({
+                pathComplexity: 0.5,
+                triangleCount: 8
+            })
+
+            let colorTheme = [
+                "rgb(0,0,0)", "rgb(255,255,255)", "rgb(224, 64, 64)", "rgb(64, 224, 64)",
+                "rgb(224,224,64)"
+            ]
+
+            let board = document.getElementById("board");
+            let drawer = new CanvasDrawer(
+                puzzle,
+                board, 
+                80, 80, 15, 15, 
+                "rgb(30,80,30)", "rgb(0, 0, 128)", "rgb(224,224,128)", colorTheme)
+            
+            drawer.draw(puzzle)
+            //drawer.drawPath(5, 5, puzzle.path)
+        }
+
+    </script>
+    <style type="text/css">
+        canvas {
+            border: 1px solid lightgray;
+            background-color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="board" width="500" height="500"></canvas>
+</body>
+
+</html>

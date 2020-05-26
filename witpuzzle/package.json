@@ -1,0 +1,23 @@
+{
+  "name": "witpuzzle",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "witness puzzle",
+  "main": "main.js",
+  "scripts": {
+    "test": "ava --fail-fast"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timepp/witpuzzle.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/timepp/witpuzzle/issues"
+  },
+  "homepage": "https://github.com/timepp/witpuzzle#readme",
+  "dependencies": {
+    "tape": "^5.0.0"
+  }
+}
