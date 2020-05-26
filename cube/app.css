@@ -1,8 +1,8 @@
 .roofpig {
     width: 200px;
     height: 200px;
-    margin-bottom: 60px;
-    background-color: #808080;
+    background: radial-gradient(#C0C0C0,#101010);
+    margin-bottom: 40px;
     float: left;
 }
 
@@ -13,4 +13,8 @@
 .note {
     margin-left: 20px;
     color: #808080;
+}
+
+body {
+    margin: 5px;
 }
