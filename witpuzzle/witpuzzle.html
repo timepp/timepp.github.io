@@ -3,37 +3,52 @@
 
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     
     <script type="module">
         import SAW from "./saw.js"
         import * as wp from "./main.js"
         import {CanvasDrawer} from "./canvasdrawer.js"
         let ctx = null;
+        let drawer = null;
 
         window.onload = init
 
         function init() {
-
-            let puzzle = new wp.Puzzle(4, 4)
-            puzzle.generate({
-                pathComplexity: 0.5,
-                triangleCount: 8
-            })
-
+            let board = document.getElementById("board");
+            board.width = Math.min(document.body.clientWidth, 500)
+            board.height = board.width
             let colorTheme = [
                 "rgb(0,0,0)", "rgb(255,255,255)", "rgb(224, 64, 64)", "rgb(64, 224, 64)",
                 "rgb(224,224,64)"
             ]
+            drawer = new CanvasDrawer(board, "rgb(30,80,30)", "rgb(0, 0, 128)", "rgb(224,224,128)", colorTheme)
+            document.getElementById("newpuzzle").onclick = () => newPuzzle()
+            document.getElementById("solve").onclick = () => drawer.drawSolution()
+            newPuzzle()
+        }
 
-            let board = document.getElementById("board");
-            let drawer = new CanvasDrawer(
-                puzzle,
-                board, 
-                80, 80, 15, 15, 
-                "rgb(30,80,30)", "rgb(0, 0, 128)", "rgb(224,224,128)", colorTheme)
-            
-            drawer.draw(puzzle)
-            //drawer.drawPath(5, 5, puzzle.path)
+        function newPuzzle() {
+            let puzzle = new wp.Puzzle(4, 4)
+
+            if (Math.random() < 0.5) {
+                puzzle.generate({
+                pathComplexity: Math.random(),
+                triangleCount: 10,
+                squareCount: 0,
+                squareColorCount: 0
+                })
+            } else {
+                puzzle.generate({
+                pathComplexity: Math.random(),
+                triangleCount: 0,
+                squareCount: 10,
+                squareColorCount: 4
+                })
+            }
+
+            drawer.setPuzzle(puzzle)
         }
 
     </script>
@@ -46,7 +61,10 @@
 </head>
 
 <body>
-    <canvas id="board" width="500" height="500"></canvas>
+    <button id="newpuzzle">next</button> 
+    <button id="solve">solve</button>
+    <br><br>
+    <canvas id="board"></canvas>
 </body>
 
 </html>

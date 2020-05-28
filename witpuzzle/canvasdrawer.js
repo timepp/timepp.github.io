@@ -6,39 +6,37 @@ export class CanvasDrawer {
     /**
      * 
      * @param {Puzzle} puzzle 
-     * @param {*} e 
+     * @param {HTMLElement} e 
      * @param {*} cw 
      * @param {*} ch 
      * @param {*} rw 
-     * @param {*} rh 
      * @param {*} cc 
      * @param {*} rc 
      * @param {*} lc 
      * @param {*} colorTheme 
      */
-    constructor(puzzle, e, cw, ch, rw, rh, cc, rc, lc, colorTheme) {
+    constructor(e, cc, rc, lc, colorTheme) {
         this.elem = e
+        /** @type {CanvasRenderingContext2D} */
         this.ctx = e.getContext("2d");
-        this.cw = cw
-        this.ch = ch
-        this.rw = rw
-        this.rh = rh
         this.cc = cc
         this.rc = rc
         this.lc = lc
         this.colorTheme = colorTheme
-        this.tx = 50
-        this.ty = 50
-        this.ctx.translate(this.tx, this.ty)
-        this.puzzle = puzzle
+        this.saw = true // self avoiding walk. 
+
+        this.puzzle = null
         this.path = []
         this.walking = false
-        this.direction = []
-        this.saw = true // self avoiding walk. 
-        this.endPoint = this.getEndPoint()
         this.completing = false
 
-        this.draw(this.puzzle)
+        this.cw = 0
+        this.ch = 0
+        this.rw = 0
+        this.tx = 0
+        this.ty = 0
+        this.endPoint = []
+
         this.registerListeners()
     }
 
@@ -47,10 +45,31 @@ export class CanvasDrawer {
     }
 
     screenToClient(x, y) {
-        return [
+        let r = [
             x - this.elem.getBoundingClientRect().left - this.tx,
-            y - this.elem.getBoundingClientRect().top - this.ty
+            this.elem.clientWidth - (y - this.elem.getBoundingClientRect().top + this.ty)
         ]
+        console.log("screen to client: ", x, y, "=> ", r)
+        return r
+    }
+
+    setPuzzle(puzzle) {
+        const e = this.elem
+        this.puzzle = puzzle
+        this.path = []
+        this.walking = false
+        this.completing = false
+
+        this.cw = Math.floor(e.clientWidth / puzzle.m * 0.8)
+        this.ch = this.cw
+        this.rw = Math.floor(e.clientWidth / puzzle.m * 0.15)
+        this.tx = Math.floor(e.clientWidth * 0.1)
+        this.ty = this.tx
+        this.endPoint = this.getEndPoint()
+        this.ctx.resetTransform()
+        this.ctx.translate(this.tx, e.clientWidth - this.ty)
+        this.ctx.scale(1, -1)
+        this.draw(this.puzzle)
     }
 
     /**
@@ -61,6 +80,11 @@ export class CanvasDrawer {
         this.drawBoard()
         this.drawFrame()
         this.drawCellObjects(puzzle.cellObjects, puzzle.m, puzzle.n)
+    }
+
+    drawSolution() {
+        this.drawFrame()
+        this.drawPath(this.puzzle.path.map(v => [v[0] * this.cw, v[1] * this.ch]))
     }
     
     drawFrame() {
@@ -95,13 +119,7 @@ export class CanvasDrawer {
         event.preventDefault()
         let t = event.changedTouches[0]
 
-        if (t.pageX < 20) {
-            // drawsolution
-            this.drawPath(this.puzzle.path.map(v => [v[0] * this.cw, v[1] * this.ch]))
-            return
-        }
-
-        const [x, y] = this.screenToClient(t.pageX, t.pageY)
+        const [x, y] = this.screenToClient(t.clientX, t.clientY)
 
         // check start points
         let p = this.translate(this.puzzle.config.startPoint)
@@ -123,7 +141,7 @@ export class CanvasDrawer {
     onTouchMove(event) {
         event.preventDefault()
         let t = event.changedTouches[0]
-        this.onSolveMoving(t.pageX, t.pageY)
+        this.onSolveMoving(t.clientX, t.clientY)
     }
 
     onTouchEnd(event) {
@@ -159,12 +177,6 @@ export class CanvasDrawer {
             console.log("full path: ", JSON.stringify(fullPath))
         }
 
-        if (event.pageX < 20) {
-            // drawsolution
-            this.drawPath(this.puzzle.path.map(v => [v[0] * this.cw, v[1] * this.ch]))
-            return
-        }
-
         if (this.walking) {
             this.walking = false
             this.path = []
@@ -172,7 +184,7 @@ export class CanvasDrawer {
             return
         }
         
-        const [x, y] = this.screenToClient(event.pageX, event.pageY)
+        const [x, y] = this.screenToClient(event.clientX, event.clientY)
 
         // check start points
         let p = this.translate(this.puzzle.config.startPoint)
@@ -215,9 +227,8 @@ export class CanvasDrawer {
                 this.path.push([xg, yg])
             }
             this.drawFrame()
-            if (xg == this.endPoint[0] && yg == this.endPoint[1]) {
-                this.completing = true
-            }
+            this.completing = true
+
             const style = this.completing ? "rgb(255,255,255)" : undefined
             this.drawPath(this.path, style)
             return
@@ -283,28 +294,6 @@ export class CanvasDrawer {
         }
     }
 
-    extendPathTo(x, y) {
-        console.log(JSON.stringify(this.path), x, y)
-        const [x0, y0] = this.path[this.path.length - 1]
-        if (x == x0 && y == y0) return
-
-        const [x1, y1] = this.path[this.path.length - 2]
-        let points = this.middleCrosses(x1, y1, x, y)
-        if (points.length == 0) {
-            let p = this.path[this.path.length - 1]
-            p[0] = x
-            p[1] = y
-        } else {
-            this.path.pop()
-            this.path = this.path.concat(points)
-            this.path.push([x, y])
-        }
-        if (x % this.cw == 0 && y % this.ch == 0) {
-            this.path.push([x, y])
-        }
-        console.log(JSON.stringify(this.path))
-    }
-
     drawStartPoint(p, style) {
         this.ctx.fillStyle = style
         this.ctx.beginPath()
@@ -334,6 +323,13 @@ export class CanvasDrawer {
                 const y = j * this.ch + dy
                 this.drawTriangle(x, y, x + w, y + h, color)
             }
+        } else if (obj.type === "square") {
+            let ctx = this.ctx
+            const w = this.cw / 3
+            const dx = (this.cw - w) / 2
+            const dy = (this.ch - w) / 2
+            ctx.fillStyle = color
+            ctx.fillRect(i * this.cw + dx, j * this.ch + dy, w, w)
         }
     }
 
@@ -341,10 +337,16 @@ export class CanvasDrawer {
         let ctx = this.ctx
         ctx.fillStyle = color
         ctx.beginPath()
-        ctx.moveTo((x1+x2)/2, y1)
-        ctx.lineTo(x1, y2)
-        ctx.lineTo(x2, y2)
+        ctx.moveTo((x1+x2)/2, y2)
+        ctx.lineTo(x1, y1)
+        ctx.lineTo(x2, y1)
         ctx.fill()
+    }
+
+    drawSquare(x1, y1, x2, y2, color) {
+        let ctx = this.ctx
+        ctx.fillStyle = color
+        ctx.fillRect()
     }
 
     drawEndPoint(p, m, n) {

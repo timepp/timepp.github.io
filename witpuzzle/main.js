@@ -262,6 +262,31 @@ export class Puzzle {
             }
         }
 
+        // squares
+        if (this.config.squareCount > 0) {
+            const regions = getRegions(this.path, this.m+1, this.n+1)
+            const colorCount = Math.min(regions.length, this.config.squareColorCount)
+            const sr = shuffle(regions)
+            
+            let d = ndarray([this.m, this.n], 0)
+            for (let i = 0; i < sr.length; i++) {
+                const r = sr[i]
+                for (const [x, y] of r) {
+                    d[x][y] = 1 + (i % colorCount)
+                }
+            }
+
+            let arr = [].concat(...regions)
+            arr = shuffle(arr)
+            for (let i = 0; i < arr.length && i < this.config.squareCount; i++) {
+                const [x, y] = arr[i]
+                this.cellObjects[x][y] = {
+                    type: "square",
+                    color: d[x][y]
+                }
+            }
+        }
+
         if (this.config.hexagonCount > 0) {
             let arr = []
             for (let i = 0; i < this.path.length-1; i++) {
@@ -323,6 +348,22 @@ export class Puzzle {
                 co.checkResult = true
                 if (co.type == "triangle") {
                     if (pn[i][j] != co.value) {
+                        r = false
+                        co.checkResult = false
+                    }
+                }
+            }
+        }
+
+        // squares
+        const regions = getRegions(p, this.m+1, this.n+1)
+        for (const region of regions) {
+            let c = -1
+            for (const [x,y] of region) {
+                let co = this.cellObjects[x][y]
+                if (co != null && co.type == "square") {
+                    if (c == -1) c = co.color
+                    if (c != co.color) {
                         r = false
                         co.checkResult = false
                     }
