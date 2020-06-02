@@ -1,11 +1,10 @@
-import {Puzzle} from "./main.js"
+import {Puzzle, checkPath} from "./main.js"
+import {getBounds} from "./shape.js"
 import * as geo from "./geo.js"
 
 export class CanvasDrawer {
 
     /**
-     * 
-     * @param {Puzzle} puzzle 
      * @param {HTMLElement} e 
      * @param {*} cw 
      * @param {*} ch 
@@ -49,10 +48,13 @@ export class CanvasDrawer {
             x - this.elem.getBoundingClientRect().left - this.tx,
             this.elem.clientWidth - (y - this.elem.getBoundingClientRect().top + this.ty)
         ]
-        console.log("screen to client: ", x, y, "=> ", r)
         return r
     }
 
+    /**
+     * 
+     * @param {Puzzle} puzzle 
+     */
     setPuzzle(puzzle) {
         const e = this.elem
         this.puzzle = puzzle
@@ -60,10 +62,10 @@ export class CanvasDrawer {
         this.walking = false
         this.completing = false
 
-        this.cw = Math.floor(e.clientWidth / puzzle.m * 0.8)
+        this.cw = Math.floor(e.clientWidth / (puzzle.m + 1))
         this.ch = this.cw
-        this.rw = Math.floor(e.clientWidth / puzzle.m * 0.15)
-        this.tx = Math.floor(e.clientWidth * 0.1)
+        this.rw = Math.min(Math.floor(this.cw / 4), 50)
+        this.tx = Math.floor((e.clientWidth - this.cw * puzzle.m)/2)
         this.ty = this.tx
         this.endPoint = this.getEndPoint()
         this.ctx.resetTransform()
@@ -90,8 +92,9 @@ export class CanvasDrawer {
     drawFrame() {
         let puzzle = this.puzzle
         this.drawRoad()
-        this.drawStartPoint(puzzle.config.startPoint, this.rc)
-        this.drawEndPoint(puzzle.config.endPoint, puzzle.m, puzzle.n)
+        this.drawBorderObjects()
+        this.drawStartPoint(puzzle.startPoints[0], this.rc)
+        this.drawEndPoint(puzzle.endPoints[0], puzzle.m, puzzle.n)
     }
 
     registerListeners() {
@@ -122,7 +125,7 @@ export class CanvasDrawer {
         const [x, y] = this.screenToClient(t.clientX, t.clientY)
 
         // check start points
-        let p = this.translate(this.puzzle.config.startPoint)
+        let p = this.translate(this.puzzle.startPoints[0])
         if (this.insideStartPoint(x, y)) {
             console.log("walking")
             if (this.walking) {
@@ -156,6 +159,7 @@ export class CanvasDrawer {
             } else {
                 this.drawPath(this.path, "rgb(255, 0, 0)")
                 this.drawCellObjects(this.puzzle.cellObjects, this.puzzle.m, this.puzzle.n, true)
+                this.drawBorderObjects(true)
             }
             console.log("full path: ", JSON.stringify(fullPath))
         }
@@ -167,7 +171,7 @@ export class CanvasDrawer {
             // check solution
             this.walking = false
             let fullPath = this.getFullPath()
-            const r = this.puzzle.checkPath(fullPath)
+            const r = checkPath(this.puzzle, fullPath)
             if (r) {
                 this.drawPath(this.path, "rgb(0, 255, 0)")
             } else {
@@ -184,10 +188,10 @@ export class CanvasDrawer {
             return
         }
         
-        const [x, y] = this.screenToClient(event.clientX, event.clientY)
+        const [x, y] = this.screenToClient(event.pageX, event.pageY)
 
         // check start points
-        let p = this.translate(this.puzzle.config.startPoint)
+        let p = this.translate(this.puzzle.startPoints[0])
         if (this.insideStartPoint(x, y)) {
             console.log("walking")
             this.walking = true
@@ -199,7 +203,7 @@ export class CanvasDrawer {
     onSolveMoving(pageX, pageY) {
         if (!this.walking) return
 
-        console.log(JSON.stringify(this.path))
+        // console.log(JSON.stringify(this.path))
 
         let path = this.path
         const [m, n] = [this.puzzle.m, this.puzzle.n]
@@ -216,8 +220,9 @@ export class CanvasDrawer {
 
         // check exit case
         if (xg > this.cw * m || yg > this.ch * n) {
-            const p = this.puzzle.config.endPoint
+            const p = this.puzzle.endPoints[0]
             const [xe, ye] = [p[0] * this.cw, p[1] * this.ch]
+            if (x1 != xe && y1 != xe) return
             if (x1 == xe && y1 == ye) {
                 p0[0] = xg
                 p0[1] = yg
@@ -297,8 +302,37 @@ export class CanvasDrawer {
     drawStartPoint(p, style) {
         this.ctx.fillStyle = style
         this.ctx.beginPath()
-        this.ctx.arc(p[0] * this.cw, p[1] * this.ch, this.rw * 1.5, 0, 2 * Math.PI)
+        this.ctx.arc(p[0] * this.cw, p[1] * this.ch, this.rw * 1.2, 0, 2 * Math.PI)
         this.ctx.fill()
+    }
+
+    drawBorderObjects(showCheckResult) {
+        for (let i = 0; i <= this.puzzle.m*2; i++) for (let j = 0; j <= this.puzzle.n*2; j++) {
+            this.drawBorderObject(this.puzzle.borderObjects[i][j], i, j, showCheckResult)
+        }
+    }
+
+    drawBorderObject(obj, i, j, showCheckResult) {
+        if (!obj) return
+        const color = showCheckResult && !obj.checkResult? "rgb(255,0,0)" : this.colorTheme[obj.color]
+        if (obj.type === "hexagon") {
+            this.drawHexagon(i * this.cw / 2, j * this.ch / 2, this.rw / 3, color)
+        } else if (obj.type === "gap") {
+            const [cw, ch, rw] = [this.cw, this.ch, this.rw]
+            let x1 = (i % 2 == 0)? i / 2 : (i-1)/2
+            let y1 = (j % 2 == 0)? j / 2 : (j-1)/2
+            let x2 = (i % 2 == 0)? i / 2 : (i+1)/2
+            let y2 = (j % 2 == 0)? j / 2 : (j+1)/2
+            let r1 = (1 - obj.length) / 2
+            let r2 = r1 + obj.length
+            let lw = cw - rw
+            let lh = ch - rw
+            let X1 = x1 * cw + rw / 2*(x2-x1) + (x2-x1)*lw*r1
+            let Y1 = y1 * ch + rw / 2*(y2-y1) + (y2-y1)*lh*r1
+            let X2 = x1 * cw + rw / 2*(x2-x1) + (x2-x1)*lw*r2
+            let Y2 = y1 * ch + rw / 2*(y2-y1) + (y2-y1)*lh*r2
+            this.drawGap(X1, Y1, X2, Y2)
+        }
     }
 
     drawCellObjects(arr, m, n, showCheckResult) {
@@ -330,6 +364,8 @@ export class CanvasDrawer {
             const dy = (this.ch - w) / 2
             ctx.fillStyle = color
             ctx.fillRect(i * this.cw + dx, j * this.ch + dy, w, w)
+        } else if (obj.type === "tetris") {
+            this.drawTetris(obj.shape, i, j, color)
         }
     }
 
@@ -349,9 +385,41 @@ export class CanvasDrawer {
         ctx.fillRect()
     }
 
+    drawTetris(shape, i, j, color) {
+        let [bw, bh] = [this.cw / 8, this.ch / 8]
+        const gap = 1
+        let [minx, miny, maxx, maxy] = getBounds(shape)
+        let x0 = (this.cw - (maxx + 1) * bw) / 2 + i * this.cw
+        let y0 = (this.ch - (maxy + 1) * bh) / 2 + j * this.ch
+        this.ctx.fillStyle = color
+        for (const [x, y] of shape) {
+            this.ctx.fillRect(x0 + x * bw, y0 + y * bh, bw-gap, bh-gap)
+        }
+    }
+
+    drawHexagon(x, y, radius, color) {
+        this.drawPolygon(x, y, radius, 6, 0, color)
+    }
+
+    drawPolygon(x, y, radius, n, a1, color) {
+        this.ctx.fillStyle = color
+        this.ctx.beginPath()
+        let angles = [...new Array(n).keys()].map(v => a1 + Math.PI * 2 * v / n)
+        for (let i = 0; i < angles.length; i++) {
+            let a = angles[i]
+            let [vx, vy] = [x + radius * Math.cos(a), y + radius * Math.sin(a)]
+            if (i == 0) {
+                this.ctx.moveTo(vx, vy)
+            } else {
+                this.ctx.lineTo(vx, vy)
+            }
+        }
+        this.ctx.fill()
+    }
+
     drawEndPoint(p, m, n) {
         let ctx = this.ctx
-        const [x,y] = this.puzzle.config.endPoint
+        const [x,y] = this.puzzle.endPoints[0]
         const [x1, y1] = this.endPoint
         ctx.strokeStyle = this.rc
         ctx.lineJoin = "round"
@@ -366,6 +434,16 @@ export class CanvasDrawer {
     drawBoard() {
         this.ctx.fillStyle = this.cc
         this.ctx.fillRect(0, 0, this.cw * this.puzzle.m, this.ch * this.puzzle.n)
+    }
+
+    drawGap(x1, y1, x2, y2) {
+        this.ctx.strokeStyle = this.cc
+        this.ctx.lineWidth = this.rw+1
+        this.ctx.lineCap = "butt"
+        this.ctx.beginPath()
+        this.ctx.moveTo(x1, y1)
+        this.ctx.lineTo(x2, y2)
+        this.ctx.stroke()
     }
 
     drawRoad() {
@@ -402,7 +480,7 @@ export class CanvasDrawer {
     }
 
     insideStartPoint(x, y) {
-        let p = this.translate(this.puzzle.config.startPoint)
+        let p = this.translate(this.puzzle.startPoints[0])
         return this.distanceLess([x, y], p, this.rw*1.5)
     }
 
@@ -424,7 +502,7 @@ export class CanvasDrawer {
     }
 
     getEndPoint() {
-        const [x,y] = this.puzzle.config.endPoint
+        const [x,y] = this.puzzle.endPoints[0]
         const m = this.puzzle.m
         const n = this.puzzle.n
         let l = this.rw
@@ -435,7 +513,7 @@ export class CanvasDrawer {
 
     findNearestPointInMap(x, y) {
         // exit point first
-        const p = this.puzzle.config.endPoint
+        const p = this.puzzle.endPoints[0]
         const [x1, y1] = [p[0] * this.cw, p[1] * this.ch]
         const [x2, y2] = this.endPoint
         const [x0, y0] = geo.nearestPointInLineSegment(x, y, x1, y1, x2, y2)
@@ -458,36 +536,45 @@ export class CanvasDrawer {
     }
 
     findMaxEndPointAvoidingSelfCross(x1, y1, x2, y2) {
+        const [cw, ch, rw] = [this.cw, this.ch, this.rw]
+        // x1 and y1 sould be divide by cw and ch
+        if (x1 % cw != 0 || y1 % ch != 0) {
+            throw "invalid parameter"
+        }
+        if (x2 == x1 && y2 == y1) {
+            return [x2, y2]
+        }
+
         const gap = this.rw + 5
-        if (x1 == x2) {
-            if (y1 < y2) {
-                for (let y = y1 - y1 % this.ch + this.ch; y <= y2 - y2 % this.ch + this.ch; y += this.ch) {
-                    if (this.pointInPath(x1, y)) {
-                        return [x2, Math.min(y2, y - gap)]
-                    }
-                }
-            } else {
-                for (let y = y1 - y1 % this.ch - this.ch; y >= y2 - y2 % this.ch; y -= this.ch) {
-                    if (this.pointInPath(x1, y)) {
-                        return [x2, Math.max(y + gap, y2)]
-                    }
+        const dX = Math.sign(x2 - x1)
+        const dY = Math.sign(y2 - y1)
+        let [X, Y] = [x1 / cw * 2, y1 / ch * 2]
+        while (true) {
+            X += dX
+            Y += dY
+            const [x, y] = [X * cw / 2, Y * ch / 2]
+
+            if (X % 2 == 0 && Y % 2 == 0 && this.pointInPath(x, y)) {
+                return [
+                    this.nearest(x1, x2, x - gap * dX),
+                    this.nearest(y1, y2, y - gap * dY)
+                ]
+            }
+
+            if (X % 2 == 1 || Y % 2 == 1) {
+                let obj = this.puzzle.borderObjects[X][Y]
+                if (obj.type === "gap") {
+                    return [
+                        this.nearest(x1, x2, x - (cw-rw)*obj.length/2*dX-gap*dX),
+                        this.nearest(y1, y2, y - (ch-rw)*obj.length/2*dY-gap*dY)
+                    ]
                 }
             }
-        }
-        if (y1 == y2) {
-            if (x1 < x2) {
-                for (let x = x1 - x1 % this.cw + this.cw; x <= x2 - x2 % this.cw + this.cw; x += this.cw) {
-                    if (this.pointInPath(x, y1)) {
-                        return [Math.min(x - gap, x2), y2]
-                    }
-                }
-            } else {
-                for (let x = x1 - x1 % this.cw - this.cw; x >= x2 - x2 % this.cw; x -= this.cw) {
-                    if (this.pointInPath(x, y1)) {
-                        return [Math.max(x + gap, x2), y2]
-                    }
-                }
-            }            
+
+            // stop on [x, y] go out of (x1,y1 - x2,y2)
+            if (Math.sign(x - x1) != Math.sign(x2 - x) || Math.sign(y - y1) != Math.sign(y2 - y)) {
+                break
+            }
         }
 
         return [x2, y2]
@@ -540,5 +627,12 @@ export class CanvasDrawer {
             return x1 <= x && x <= x2 || x2 <= x && x <= x1
         }
         return false
+    }
+
+    nearest(x, x1, x2) {
+        // find which one is nearest from x
+        const c1 = Math.abs(x1 - x)
+        const c2 = Math.abs(x2 - x)
+        return c1 < c2? x1 : x2
     }
 }

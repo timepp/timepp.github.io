@@ -1,5 +1,6 @@
 import SAW from "./saw.js"
 import {ndarray, range, shuffle} from "./util.js"
+import * as shape from "./shape.js"
 
 function getPassingNumber(path, m, n) {
     let pn = ndarray([m, n], 0)
@@ -78,6 +79,25 @@ function getRegions(path, m, n) {
     return Object.values(regions)
 }
 
+function indexOf(path, x1, y1, x2, y2) {
+    for (let i = 0; i < path.length; i++) {
+        if (path[i][0] == x1 && path[i][1] == y1) {
+            if (x2 === undefined) {
+                return i
+            } else {
+                if (i + 1 < path.length && path[i+1][0] == x2 && path[i+1][1] == y2) {
+                    return i
+                } else if (i - 1 >= 0 && path[i-1][0] == x2 && path[i-1][1] == y2) {
+                    return i
+                } else {
+                    return -1
+                }
+            }
+        }
+    }
+    return -1
+}
+
 function splitRegion(r, maxUnitSize) {
     let m = 1
     let n = 1
@@ -136,6 +156,15 @@ function splitRegion(r, maxUnitSize) {
     }
 
     return Object.values(regions)
+}
+
+/**
+ * 
+ * @param {Array[]} r 
+ */
+function normalizeRegion(r) {
+    const [minx, miny, maxx, maxy] = shape.getBounds(r)
+    return r.map(v => [v[0] - minx, v[1] - miny])
 }
 
 // return an array represents different objects with number
@@ -208,53 +237,100 @@ function applypaint(subregions, m, n) {
 }
 
 export class Puzzle {
-    constructor(m, n) {
-        this.m = m
-        this.n = n
+    constructor() {
+        this.m = 1
+        this.n = 1
         this.path = null
-        this.config = {
-            pathComplexity: 0.5, // 0 - 1, high complexity = large path length
-            triangleCount: 0, // triangle count, 0 == no triangle
-            triangleColorCount: 1, // all triangle has single color
-            squareColorCount: 0, // number of max square color count, 0 == no square
-            squareCount: 0, // square count, 0 == no square
-            hexagonCount: 0, // hexagon
-            hexagonColorCount: 0, // only happens when there are 2 mirror paths. meaningless now
-            terisRegionCount: 0, //
-            terisMaxParts: 4, //
-            startPoint: [0, 0], //
-            endPoint: [m, n], //
+        this.cellObjects = null
+        this.borderObjects = null
+        this.startPoints = []
+        this.endPoints = []
+    }
+}
+
+export class PuzzleConfig {
+    constructor(o) {
+        this.m = 4
+        this.n = 4
+        this.pathComplexity = 0.5 // 0 - 1, high complexity = large path length
+        this.triangleCount = 0 // triangle count, 0 == no triangle
+        this.triangleColorCount = 1 // all triangle has single color
+        this.squareCount = 0 // square count, 0 == no square
+        this.squareColorCount = 0 // number of max square color count, 0 == no square
+        this.hexagonXCount = 0 // hexagon at cross
+        this.hexagonICount = 0 // hexagon at edge
+        this.hexagonColorCount = 0 // only happens when there are 2 mirror paths. meaningless now
+        this.gapCount = 0 
+        this.gapRatio = 0.4
+        this.gapLength = 0.3
+        this.tetrisRegionCount = 0 //
+        this.tetrisMaxParts = 4 //
+        this.tetrisMinParts = 1
+        this.startPoints = [] //
+        this.endPoints = []
+        
+        for (let n in o) {
+            if (n in this) {
+                this[n] = o[n]
+            }
         }
-        this.cellObjects = ndarray([m, n], null)
-        this.borderObjects = ndarray([2*m+1, 2*n+1], "")
+    }
+}
+
+/**
+ * 
+ * @param {PuzzleConfig} conf
+ * @returns {Puzzle}
+ */
+export function generatePuzzle(conf) {
+    let startPoints = conf.startPoints.slice()
+    let endPoints = conf.endPoints.slice()
+
+    // regulate
+    for (let p of startPoints) {
+        if (p[0] > conf.m) p[0] = conf.m
+        if (p[1] > conf.n) p[1] = conf.n
+    }
+    for (let p of endPoints) {
+        if (p[0] > conf.m) p[0] = conf.m
+        if (p[1] > conf.n) p[1] = conf.n
+    }
+    if (startPoints.length == 0) {
+        startPoints.push([0, 0])
+    }
+    if (endPoints.length == 0) {
+        endPoints.push([conf.m, conf.n])
     }
 
-    generate(conf) {
-        if (conf) {
-            for (let p in this.config) if (p in conf) this.config[p] = conf[p]
-        }
-        
         // Get the path
-        const [x1, y1] = this.config.startPoint
-        const [x2, y2] = this.config.endPoint
-        let s = new SAW(this.m+1, this.n+1)
+        let p = new Puzzle()
+        p.m = conf.m
+        p.n = conf.n
+        p.cellObjects = ndarray([p.m, p.n], null)
+        p.borderObjects = ndarray([2*p.m+1, 2*p.n+1], "")
+        p.startPoints = shuffle(startPoints.slice())
+        p.endPoints = shuffle(endPoints.slice())
+        
+        const [x1, y1] = startPoints[0]
+        const [x2, y2] = endPoints[0]
+        let s = new SAW(p.m+1, p.n+1)
         s.init(x1, y1, x2, y2)
-        this.generateRandomPath(s, this.config.pathComplexity)
-        this.path = s.path
+        generateRandomPath(s, conf.pathComplexity)
+        p.path = s.path
 
         // triangles
-        if (this.config.triangleCount > 0) {
-            const pn = getPassingNumber(this.path, this.m, this.n)
+        if (conf.triangleCount > 0) {
+            const pn = getPassingNumber(p.path, p.m, p.n)
             let canfill = []
-            for (const [x,y] of range([this.m, this.n])) {
-                if (pn[x][y] > 0 && this.cellObjects[x][y] == null) {
+            for (const [x,y] of range([p.m, p.n])) {
+                if (pn[x][y] > 0 && p.cellObjects[x][y] == null) {
                     canfill.push([x,y])
                 }
             }
             shuffle(canfill)
-            for (let i = 0; i < this.config.triangleCount && i < canfill.length; i++) {
+            for (let i = 0; i < conf.triangleCount && i < canfill.length; i++) {
                 const [x,y] = canfill[i]
-                this.cellObjects[x][y] = {
+                p.cellObjects[x][y] = {
                     type: "triangle",
                     value: pn[x][y],
                     color: 4
@@ -263,12 +339,12 @@ export class Puzzle {
         }
 
         // squares
-        if (this.config.squareCount > 0) {
-            const regions = getRegions(this.path, this.m+1, this.n+1)
-            const colorCount = Math.min(regions.length, this.config.squareColorCount)
+        if (conf.squareCount > 0) {
+            const regions = getRegions(p.path, p.m+1, p.n+1)
+            const colorCount = Math.min(regions.length, conf.squareColorCount)
             const sr = shuffle(regions)
             
-            let d = ndarray([this.m, this.n], 0)
+            let d = ndarray([p.m, p.n], 0)
             for (let i = 0; i < sr.length; i++) {
                 const r = sr[i]
                 for (const [x, y] of r) {
@@ -278,24 +354,87 @@ export class Puzzle {
 
             let arr = [].concat(...regions)
             arr = shuffle(arr)
-            for (let i = 0; i < arr.length && i < this.config.squareCount; i++) {
+            for (let i = 0; i < arr.length && i < conf.squareCount; i++) {
                 const [x, y] = arr[i]
-                this.cellObjects[x][y] = {
+                p.cellObjects[x][y] = {
                     type: "square",
                     color: d[x][y]
                 }
             }
         }
 
-        if (this.config.hexagonCount > 0) {
-            let arr = []
-            for (let i = 0; i < this.path.length-1; i++) {
-                
+        // hexagon
+        if (conf.hexagonXCount > 0 || conf.hexagonICount > 0) {
+            let arrX = []
+            let arrI = []
+            for (let i = 0; i < p.path.length-1; i++) {
+                let [x1, y1] = p.path[i]
+                let [x2, y2] = p.path[i+1]
+                arrX.push([x2 * 2, y2 * 2])
+                arrI.push([x1 + x2, y1 + y2])
+            }
+            shuffle(arrX)
+            shuffle(arrI)
+            for (let i = 0; i < arrX.length && i < conf.hexagonXCount; i++) {
+                const [x, y] = arrX[i]
+                p.borderObjects[x][y] = {
+                    type: "hexagon",
+                    color: 0
+                }
+            }
+            for (let i = 0; i < arrI.length && i < conf.hexagonICount; i++) {
+                const [x, y] = arrI[i]
+                p.borderObjects[x][y] = {
+                    type: "hexagon",
+                    color: 0
+                }
             }
         }
+
+        // gap
+        if (conf.gapCount > 0) {
+            let arr = []
+            for (let i = 0; i <= p.m*2; i++) for (let j = 0; j <= p.n*2; j++) {
+                if (i % 2 == 1 && j % 2 == 0) {
+                    let [x1, y1, x2, y2] = [(i-1)/2, j/2, (i+1)/2, j/2]
+                    if (indexOf(p.path, x1, y1, x2, y2) == -1) arr.push([i, j])
+                } else if (i % 2 == 0 && j % 2 == 1) {
+                    let [x1, y1, x2, y2] = [i/2, (j-1)/2, i/2, (j+1)/2]
+                    if (indexOf(p.path, x1, y1, x2, y2) == -1) arr.push([i, j])
+                }
+            }
+            shuffle(arr)
+            for (let i = 0; i < arr.length && i < conf.gapCount; i++) {
+                const [x, y] = arr[i]
+                p.borderObjects[x][y] = {
+                    type: "gap",
+                    length: conf.gapLength
+                }
+            }
+        }
+
+        // te
+        if (conf.tetrisRegionCount > 0) {
+            let regions = getRegions(p.path, p.m+1, p.n+1)
+            shuffle(regions)
+            for (let i = 0; i < conf.tetrisRegionCount && i < regions.length; i++) {
+                let r = regions[i]
+                const subRegions = splitRegion(r, conf.tetrisMaxParts)
+                shuffle(r)
+                for (let i = 0; i < subRegions.length; i++) {
+                    const [x, y] = r[i]
+                    p.cellObjects[x][y] = {
+                        type: "tetris",
+                        shape: normalizeRegion(subRegions[i]),
+                        color: 4
+                    }
+                }
+            }
+        }
+        return p
     }
 
-    generateRandomPath(s, c) {
+function generateRandomPath(s, c) {
         const trycount = 100;
         const backdepth = 5;
         let maxlen = s.M * s.N;
@@ -337,13 +476,13 @@ export class Puzzle {
         }
     }
 
-    checkPath(p) {
+export function checkPath(p, path) {
         // check whether a path can meet configurations
         let r = true
         // triangles
-        const pn = getPassingNumber(p, this.m, this.n)
-        for (let i = 0; i < this.m; i++) for (let j = 0; j < this.n; j++) {
-            let co = this.cellObjects[i][j]
+        const pn = getPassingNumber(path, p.m, p.n)
+        for (let i = 0; i < p.m; i++) for (let j = 0; j < p.n; j++) {
+            let co = p.cellObjects[i][j]
             if (co != null) {
                 co.checkResult = true
                 if (co.type == "triangle") {
@@ -356,11 +495,11 @@ export class Puzzle {
         }
 
         // squares
-        const regions = getRegions(p, this.m+1, this.n+1)
+        const regions = getRegions(path, p.m+1, p.n+1)
         for (const region of regions) {
             let c = -1
             for (const [x,y] of region) {
-                let co = this.cellObjects[x][y]
+                let co = p.cellObjects[x][y]
                 if (co != null && co.type == "square") {
                     if (c == -1) c = co.color
                     if (c != co.color) {
@@ -370,10 +509,43 @@ export class Puzzle {
                 }
             }
         }
+        
+        // hexagons
+        let h = {}
+        for (let i = 0; i < path.length-1; i++) {
+            let [x1, y1] = path[i]
+            let [x2, y2] = path[i+1]
+            h[x2*2 + "," + y2*2] = 1
+            h[(x1+x2)+ "," + (y1+y2)] = 1
+        }
+        for (let i = 0; i <= p.m*2; i++) for (let j = 0; j <= p.n*2; j++) {
+            let bo = p.borderObjects[i][j]
+            if (bo != null && bo.type == "hexagon") {
+                if (!((i + "," + j) in h)) {
+                    r = false
+                    bo.checkResult = false
+                }
+            }
+        }
+
+        // tetris
+        for (const region of regions) {
+            const s = shape.setToShape(region, "")
+            let ss = []
+            for (const [x,y] of region) {
+                const o = p.cellObjects[x][y]
+                if (o !== null && o.type === "tetris") {
+                    ss.push(shape.setToShape(o.shape))
+                }
+            }
+            if (ss.length > 0 && !shape.checkComposition(s, ss)) {
+                r = false
+            }
+        }
 
         return r
     }
-}
+
 
 function test() {
     let p = new Puzzle(5, 5)

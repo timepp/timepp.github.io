@@ -198,14 +198,14 @@ function checkCompositionInOrder(s, ss) {
 
         let res = tryPaint(ss[index], ps[index][0], ps[index][1])
         if (res) {
-            console.log(`paint ${ss[index].name} at ${ps[index]}`)
-            console.log(r)
+            //console.log(`paint ${ss[index].name} at ${ps[index]}`)
+            //console.log(r)
             index++
             if (index == ss.length) return true
             ps[index] = [...ps[index-1]]
             shouldForward = false
         } else {
-            console.log(`paint ${ss[index].name} at ${ps[index]} failed`)
+            //console.log(`paint ${ss[index].name} at ${ps[index]} failed`)
         }
     }
 
@@ -225,9 +225,30 @@ export function checkComposition(s, arr) {
 
     // ourter loop, through all shape permutations
     do {
-        console.log(ss.map(v=>v.name))
+        // console.log(ss.map(v=>v.name))
         if (checkCompositionInOrder(s, ss)) return true
     } while (nextPermutation(ss, (a,b)=>compareShape(a,b) < 0))
 
     return false
+}
+
+export function setToShape(r, name) {
+    let [minx, miny, maxx, maxy] = getBounds(r)
+    const [m, n] = [maxx-minx+1, maxy-miny+1]
+    let data = ndarray([m, n], 0)
+    for (const [x, y] of r) {
+        data[x-minx][y-miny] = 1
+    }
+    return new Shape(m, n, data, name)
+}
+
+export function getBounds(r) {
+    let [minx, miny, maxx, maxy] = [-1, -1, -1, -1]
+    for (const [x, y] of r) {
+        if (minx == -1 || minx > x) minx = x
+        if (maxx == -1 || maxx < x) maxx = x
+        if (miny == -1 || miny > y) miny = y
+        if (maxy == -1 || maxy < y) maxy = y
+    }
+    return [minx, miny, maxx, maxy]
 }
