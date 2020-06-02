@@ -92,9 +92,9 @@ export class CanvasDrawer {
     drawFrame() {
         let puzzle = this.puzzle
         this.drawRoad()
-        this.drawBorderObjects()
         this.drawStartPoint(puzzle.startPoints[0], this.rc)
         this.drawEndPoint(puzzle.endPoints[0], puzzle.m, puzzle.n)
+        this.drawBorderObjects()
     }
 
     registerListeners() {
@@ -153,7 +153,7 @@ export class CanvasDrawer {
             // check solution
             this.walking = false
             let fullPath = this.getFullPath()
-            const r = this.puzzle.checkPath(fullPath)
+            const r = checkPath(this.puzzle, fullPath)
             if (r) {
                 this.drawPath(this.path, "rgb(0, 255, 0)")
             } else {

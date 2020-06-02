@@ -449,6 +449,13 @@ function generateRandomPath(s, c) {
         if ((p1[0]+p1[1]+p2[0]+p2[1]+s.M*s.N+1) % 2 == 1) {
             maxlen--;
         }
+
+        // initial random shift, 
+        // resolve corner cases such as 2x2 saw
+        const irs = Math.random() * 10
+        for (let i = 0; i < irs; i++) {
+            s.randomShift()
+        }
  
         // try getting longest
         for (let i = 0; i < trycount; i++) {

@@ -1,6 +1,13 @@
-/// SAW (self avoiding walk) generation
+/** SAW (self avoiding walk) generation
+ *  by random shifts based on the initial path
+ */
 
 export default class SAW {
+    /**
+     * 
+     * @param {number} m: grid count at X direction 
+     * @param {number} n: grid count at Y direction
+     */
     constructor(m, n) {
         this.M = m
         this.N = n

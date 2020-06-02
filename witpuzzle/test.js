@@ -2,6 +2,7 @@ import * as util from "./util.js"
 import * as shape from "./shape.js"
 import * as ph from "perf_hooks"
 import * as geo from "./geo.js"
+import SAW from "./saw.js"
 import test from "tape"
 
 function f(i) {
@@ -86,6 +87,22 @@ test("geo", t => {
     t.deepEqual(geo.nearestCornerInRectangle(100, 100, 0, 0, 10, 20), [10, 20])
 
     t.deepEqual(geo.nearestPointInLineSegment(0, 10, 0, 0, 10, 10), [5, 5])
+
+    t.end()
+})
+
+test("saw", t => {
+    let s = new SAW(2, 2)
+    s.init(0, 0, 1, 1)
+
+    const sd = s.getAllShiftData()
+    console.log(sd)
+
+    s.randomShift()
+    console.log(s.path)
+
+    s.randomShift()
+    console.log(s.path)
 
     t.end()
 })
