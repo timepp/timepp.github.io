@@ -13,8 +13,11 @@ export function createSettingPage(e, obj) {
             return function() {
                 if (typeof obj[p] === "number") {
                     obj[p] = parseFloat(e.value)
+                    if (isNaN(obj[p])) {
+                        obj[p] = 0
+                    }
                 } else if (typeof obj[p] === "string") {
-                    obj[p] = e.value
+                    obj[p] = e.value + ""
                 } else if (typeof obj[p] === "object" && obj[p] instanceof Array) {
                     obj[p] = JSON.parse("[" + e.value + "]")
                 }

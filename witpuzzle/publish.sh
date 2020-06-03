@@ -3,7 +3,7 @@
 pushd ../timepp.github.io/witpuzzle
 git reset --hard
 git pull
-cp ../witpuzzle/* .
+cp ../../witpuzzle/* .
 git add *
 git commit -m "update witpuzzle"
 git push
