@@ -14,10 +14,11 @@ export class CanvasDrawer {
      * @param {*} lc 
      * @param {*} colorTheme 
      */
-    constructor(e, cc, rc, lc, colorTheme) {
+    constructor(e, bc, cc, rc, lc, colorTheme) {
         this.elem = e
         /** @type {CanvasRenderingContext2D} */
         this.ctx = e.getContext("2d");
+        this.backgroundColor = bc
         this.cc = cc
         this.rc = rc
         this.lc = lc
@@ -69,6 +70,8 @@ export class CanvasDrawer {
         this.ty = this.tx
         this.endPoint = this.getEndPoint()
         this.ctx.resetTransform()
+        this.ctx.fillStyle = this.backgroundColor
+        this.ctx.fillRect(0, 0, e.clientWidth, e.clientHeight)
         this.ctx.translate(this.tx, e.clientWidth - this.ty)
         this.ctx.scale(1, -1)
         this.draw(this.puzzle)
@@ -92,9 +95,9 @@ export class CanvasDrawer {
     drawFrame() {
         let puzzle = this.puzzle
         this.drawRoad()
+        this.drawBorderObjects()
         this.drawStartPoint(puzzle.startPoints[0], this.rc)
         this.drawEndPoint(puzzle.endPoints[0], puzzle.m, puzzle.n)
-        this.drawBorderObjects()
     }
 
     registerListeners() {
@@ -204,6 +207,7 @@ export class CanvasDrawer {
         if (!this.walking) return
 
         // console.log(JSON.stringify(this.path))
+        // console.log(pageX, pageY)
 
         let path = this.path
         const [m, n] = [this.puzzle.m, this.puzzle.n]
@@ -212,7 +216,7 @@ export class CanvasDrawer {
         let p1 = path.length > 1 ? path[path.length - 2] : [-1, -1]
         let p2 = path.length > 2 ? path[path.length - 3] : [-1, -1]
         const [x0, y0] = p0
-        const [x1, y1] = p1
+        let [x1, y1] = p1
         const [x2, y2] = p2
 
         // find the point in the grid(xg, yg) that is nearest to [x,y]
@@ -222,14 +226,15 @@ export class CanvasDrawer {
         if (xg > this.cw * m || yg > this.ch * n) {
             const p = this.puzzle.endPoints[0]
             const [xe, ye] = [p[0] * this.cw, p[1] * this.ch]
+            const [xf, yf] = this.endPoint
             if (x1 != xe && y1 != xe) return
             if (x1 == xe && y1 == ye) {
-                p0[0] = xg
-                p0[1] = yg
+                p0[0] = xf
+                p0[1] = yf
             } else {
                 this.path.pop()
                 this.path.push([xe, ye])
-                this.path.push([xg, yg])
+                this.path.push([xf, yf])
             }
             this.drawFrame()
             this.completing = true
@@ -244,30 +249,20 @@ export class CanvasDrawer {
 
         //console.log(m, n, x, y, x0, y0, x1, y1, x2, y2, xg, yg)
 
-        // reduce point on way backing
-        if (this.path.length > 2 && (x2 == x1 && x1 == xg || y2 == y1 && y1 == yg)) {
-            this.path.pop()
-            this.path.pop()
-            this.path.push([xg, yg])
-            this.drawFrame()
-            this.drawPath(this.path)
-            return
-        }
-
         // then check if there can be a direct line from (x1, y1) to (xg, yg)
         if (this.path.length > 1 && (x1 == xg || y1 == yg)) {
             // but if there are crosses blocking in the middle we need to avoid self cross 
+            
             let [xn, yn] = [xg, yg]
             if (this.saw) {
                 [xn, yn] = this.findMaxEndPointAvoidingSelfCross(x1, y1, xg, yg)
             }
+
+            // console.log("case 1", x1, y1, x0, y0, xg, yg, xn, yn)
             
             p0[0] = xn
             p0[1] = yn
-            this.drawFrame()
-            this.drawPath(this.path)
-            return
-        }
+        } else {
 
         // if no, check if there can be a direct line from (x0, y0) to (xc, yc) to (xg, yg), 
         // where (xc, yc) is a cross point
@@ -278,6 +273,15 @@ export class CanvasDrawer {
             [xc, yc] = [x0, yg]
         }
         if (xc != -1 && yc != -1) {
+            // console.log("case 2")
+            if (x1 != xc && y1 != yc) {
+                // x0, y0 is the cross point
+                // additional point will need
+                x1 = x0
+                y1 = y0
+                this.path.push([x0, y0])
+                p0 = this.path[this.path.length-1]
+            }
             if (this.saw) {
                 let [xn, yn] = this.findMaxEndPointAvoidingSelfCross(x1, y1, xc, yc)
                 p0[0] = xn
@@ -293,10 +297,28 @@ export class CanvasDrawer {
                 this.path.push([xg, yg])
             }
 
-            this.drawFrame()
-            this.drawPath(this.path)
-            return
         }
+    }
+
+
+        
+
+                // reduce point on way backing
+                if (this.path.length > 2 && (x2 == x1 && x1 == xg || y2 == y1 && y1 == yg)) {
+                    p0 = this.path[this.path.length-1]
+                    p1 = this.path[this.path.length-2]
+                    p2 = this.path[this.path.length-3]
+                    if (p0[0] == p1[0] && p1[0] == p2[0] || p0[1] == p1[1] && p1[1] == p2[1]) {
+                        this.path.pop()
+                        this.path.pop()
+                        this.path.push(p0)
+                    }
+
+                    // console.log("way backing", x2, y2, x1, y1, xg, yg)
+                }
+
+                this.drawFrame()
+                this.drawPath(this.path)
     }
 
     drawStartPoint(p, style) {
@@ -468,7 +490,8 @@ export class CanvasDrawer {
         if (style === undefined) style = this.lc
         let ctx = this.ctx
         ctx.strokeStyle = style
-        const [cw, ch] = [this.cw, this.ch]
+        ctx.lineJoin = "round"
+        ctx.lineCap = "round"
         this.drawStartPoint(path[0], style)
         ctx.beginPath()
         ctx.moveTo(path[0][0], path[0][1])
@@ -536,6 +559,7 @@ export class CanvasDrawer {
     }
 
     findMaxEndPointAvoidingSelfCross(x1, y1, x2, y2) {
+        // console.log("fmepas: ", x1, y1, x2, y2)
         const [cw, ch, rw] = [this.cw, this.ch, this.rw]
         // x1 and y1 sould be divide by cw and ch
         if (x1 % cw != 0 || y1 % ch != 0) {
@@ -554,6 +578,8 @@ export class CanvasDrawer {
             Y += dY
             const [x, y] = [X * cw / 2, Y * ch / 2]
 
+            // console.log("checking:", x, y, X, Y)
+
             if (X % 2 == 0 && Y % 2 == 0 && this.pointInPath(x, y)) {
                 return [
                     this.nearest(x1, x2, x - gap * dX),
@@ -564,18 +590,21 @@ export class CanvasDrawer {
             if (X % 2 == 1 || Y % 2 == 1) {
                 let obj = this.puzzle.borderObjects[X][Y]
                 if (obj.type === "gap") {
-                    return [
-                        this.nearest(x1, x2, x - (cw-rw)*obj.length/2*dX-gap*dX),
-                        this.nearest(y1, y2, y - (ch-rw)*obj.length/2*dY-gap*dY)
+                    const np = [
+                        this.nearest(x1, x2, x - (cw-rw)*obj.length/2*dX-this.rw/2*dX),
+                        this.nearest(y1, y2, y - (ch-rw)*obj.length/2*dY-this.rw/2*dY)
                     ]
+                    // console.log("gap, ", np)
+                    return np
                 }
             }
 
             // stop on [x, y] go out of (x1,y1 - x2,y2)
             if (Math.sign(x - x1) != Math.sign(x2 - x) || Math.sign(y - y1) != Math.sign(y2 - y)) {
+                //console.log("break")
                 break
             }
-        }
+        } 
 
         return [x2, y2]
     }
