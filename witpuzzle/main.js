@@ -1,5 +1,5 @@
 import SAW from "./saw.js"
-import {ndarray, range, shuffle} from "./util.js"
+import {ndarray, range, shuffle, incCounter} from "./util.js"
 import * as shape from "./shape.js"
 
 function getPassingNumber(path, m, n) {
@@ -260,6 +260,8 @@ export class PuzzleConfig {
         this.hexagonXCount = 0 // hexagon at cross
         this.hexagonICount = 0 // hexagon at edge
         this.hexagonColorCount = 0 // only happens when there are 2 mirror paths. meaningless now
+        this.octagramCount = 0
+        this.octagramColorCount = 0
         this.gapCount = 0 
         this.gapRatio = 0.4
         this.gapLength = 0.3
@@ -302,137 +304,235 @@ export function generatePuzzle(conf) {
         endPoints.push([conf.m, conf.n])
     }
 
-        // Get the path
-        let p = new Puzzle()
-        p.m = conf.m
-        p.n = conf.n
-        p.cellObjects = ndarray([p.m, p.n], null)
-        p.borderObjects = ndarray([2*p.m+1, 2*p.n+1], "")
-        p.startPoints = shuffle(startPoints.slice())
-        p.endPoints = shuffle(endPoints.slice())
-        
-        const [x1, y1] = startPoints[0]
-        const [x2, y2] = endPoints[0]
-        let s = new SAW(p.m+1, p.n+1)
-        s.init(x1, y1, x2, y2)
-        generateRandomPath(s, conf.pathComplexity)
-        p.path = s.path
+    // Get the path
+    let p = new Puzzle()
+    p.m = conf.m
+    p.n = conf.n
+    p.cellObjects = ndarray([p.m, p.n], null)
+    p.borderObjects = ndarray([2 * p.m + 1, 2 * p.n + 1], "")
+    p.startPoints = shuffle(startPoints.slice())
+    p.endPoints = shuffle(endPoints.slice())
 
-        // triangles
-        if (conf.triangleCount > 0) {
-            const pn = getPassingNumber(p.path, p.m, p.n)
-            let canfill = []
-            for (const [x,y] of range([p.m, p.n])) {
-                if (pn[x][y] > 0 && p.cellObjects[x][y] == null) {
-                    canfill.push([x,y])
-                }
+    const [x1, y1] = startPoints[0]
+    const [x2, y2] = endPoints[0]
+    let s = new SAW(p.m + 1, p.n + 1)
+    s.init(x1, y1, x2, y2)
+    generateRandomPath(s, conf.pathComplexity)
+    p.path = s.path
+    const regions = getRegions(p.path, p.m + 1, p.n + 1)
+
+    // triangles
+    if (conf.triangleCount > 0) {
+        const pn = getPassingNumber(p.path, p.m, p.n)
+        let canfill = []
+        for (const [x, y] of range([p.m, p.n])) {
+            if (pn[x][y] > 0 && p.cellObjects[x][y] == null) {
+                canfill.push([x, y])
             }
-            shuffle(canfill)
-            for (let i = 0; i < conf.triangleCount && i < canfill.length; i++) {
-                const [x,y] = canfill[i]
+        }
+        shuffle(canfill)
+        for (let i = 0; i < conf.triangleCount && i < canfill.length; i++) {
+            const [x, y] = canfill[i]
+            p.cellObjects[x][y] = {
+                type: "triangle",
+                value: pn[x][y],
+                color: 4
+            }
+        }
+    }
+
+    // squares
+    if (conf.squareCount > 0) {
+        const colorCount = Math.min(regions.length, conf.squareColorCount)
+        const sr = shuffle(regions)
+
+        let d = ndarray([p.m, p.n], 0)
+        for (let i = 0; i < sr.length; i++) {
+            const r = sr[i]
+            for (const [x, y] of r) {
+                d[x][y] = 1 + (i % colorCount)
+            }
+        }
+
+        let arr = [].concat(...regions)
+        arr = shuffle(arr)
+        for (let i = 0; i < arr.length && i < conf.squareCount; i++) {
+            const [x, y] = arr[i]
+            p.cellObjects[x][y] = {
+                type: "square",
+                color: d[x][y]
+            }
+        }
+    }
+
+    // hexagon
+    if (conf.hexagonXCount > 0 || conf.hexagonICount > 0) {
+        let arrX = []
+        let arrI = []
+        for (let i = 0; i < p.path.length - 1; i++) {
+            let [x1, y1] = p.path[i]
+            let [x2, y2] = p.path[i + 1]
+            arrX.push([x2 * 2, y2 * 2])
+            arrI.push([x1 + x2, y1 + y2])
+        }
+        shuffle(arrX)
+        shuffle(arrI)
+        for (let i = 0; i < arrX.length && i < conf.hexagonXCount; i++) {
+            const [x, y] = arrX[i]
+            p.borderObjects[x][y] = {
+                type: "hexagon",
+                color: 0
+            }
+        }
+        for (let i = 0; i < arrI.length && i < conf.hexagonICount; i++) {
+            const [x, y] = arrI[i]
+            p.borderObjects[x][y] = {
+                type: "hexagon",
+                color: 0
+            }
+        }
+    }
+
+    // gap
+    if (conf.gapCount > 0) {
+        let arr = []
+        for (let i = 0; i <= p.m * 2; i++) for (let j = 0; j <= p.n * 2; j++) {
+            if (i % 2 == 1 && j % 2 == 0) {
+                let [x1, y1, x2, y2] = [(i - 1) / 2, j / 2, (i + 1) / 2, j / 2]
+                if (indexOf(p.path, x1, y1, x2, y2) == -1) arr.push([i, j])
+            } else if (i % 2 == 0 && j % 2 == 1) {
+                let [x1, y1, x2, y2] = [i / 2, (j - 1) / 2, i / 2, (j + 1) / 2]
+                if (indexOf(p.path, x1, y1, x2, y2) == -1) arr.push([i, j])
+            }
+        }
+        shuffle(arr)
+        for (let i = 0; i < arr.length && i < conf.gapCount; i++) {
+            const [x, y] = arr[i]
+            p.borderObjects[x][y] = {
+                type: "gap",
+                length: conf.gapLength
+            }
+        }
+    }
+
+    // tetris
+    if (conf.tetrisRegionCount > 0) {
+        shuffle(regions)
+        for (let i = 0; i < conf.tetrisRegionCount && i < regions.length; i++) {
+            let r = regions[i]
+            const subRegions = splitRegion(r, conf.tetrisMaxParts)
+            shuffle(r)
+            for (let i = 0; i < subRegions.length; i++) {
+                const [x, y] = r[i]
                 p.cellObjects[x][y] = {
-                    type: "triangle",
-                    value: pn[x][y],
+                    type: "tetris",
+                    shape: normalizeRegion(subRegions[i]),
                     color: 4
                 }
             }
         }
+    }
 
-        // squares
-        if (conf.squareCount > 0) {
-            const regions = getRegions(p.path, p.m+1, p.n+1)
-            const colorCount = Math.min(regions.length, conf.squareColorCount)
-            const sr = shuffle(regions)
-            
-            let d = ndarray([p.m, p.n], 0)
-            for (let i = 0; i < sr.length; i++) {
-                const r = sr[i]
-                for (const [x, y] of r) {
-                    d[x][y] = 1 + (i % colorCount)
-                }
-            }
-
-            let arr = [].concat(...regions)
-            arr = shuffle(arr)
-            for (let i = 0; i < arr.length && i < conf.squareCount; i++) {
-                const [x, y] = arr[i]
-                p.cellObjects[x][y] = {
-                    type: "square",
-                    color: d[x][y]
-                }
-            }
-        }
-
-        // hexagon
-        if (conf.hexagonXCount > 0 || conf.hexagonICount > 0) {
-            let arrX = []
-            let arrI = []
-            for (let i = 0; i < p.path.length-1; i++) {
-                let [x1, y1] = p.path[i]
-                let [x2, y2] = p.path[i+1]
-                arrX.push([x2 * 2, y2 * 2])
-                arrI.push([x1 + x2, y1 + y2])
-            }
-            shuffle(arrX)
-            shuffle(arrI)
-            for (let i = 0; i < arrX.length && i < conf.hexagonXCount; i++) {
-                const [x, y] = arrX[i]
-                p.borderObjects[x][y] = {
-                    type: "hexagon",
-                    color: 0
-                }
-            }
-            for (let i = 0; i < arrI.length && i < conf.hexagonICount; i++) {
-                const [x, y] = arrI[i]
-                p.borderObjects[x][y] = {
-                    type: "hexagon",
-                    color: 0
-                }
-            }
-        }
-
-        // gap
-        if (conf.gapCount > 0) {
-            let arr = []
-            for (let i = 0; i <= p.m*2; i++) for (let j = 0; j <= p.n*2; j++) {
-                if (i % 2 == 1 && j % 2 == 0) {
-                    let [x1, y1, x2, y2] = [(i-1)/2, j/2, (i+1)/2, j/2]
-                    if (indexOf(p.path, x1, y1, x2, y2) == -1) arr.push([i, j])
-                } else if (i % 2 == 0 && j % 2 == 1) {
-                    let [x1, y1, x2, y2] = [i/2, (j-1)/2, i/2, (j+1)/2]
-                    if (indexOf(p.path, x1, y1, x2, y2) == -1) arr.push([i, j])
-                }
-            }
-            shuffle(arr)
-            for (let i = 0; i < arr.length && i < conf.gapCount; i++) {
-                const [x, y] = arr[i]
-                p.borderObjects[x][y] = {
-                    type: "gap",
-                    length: conf.gapLength
-                }
-            }
-        }
-
-        // te
-        if (conf.tetrisRegionCount > 0) {
-            let regions = getRegions(p.path, p.m+1, p.n+1)
-            shuffle(regions)
-            for (let i = 0; i < conf.tetrisRegionCount && i < regions.length; i++) {
-                let r = regions[i]
-                const subRegions = splitRegion(r, conf.tetrisMaxParts)
-                shuffle(r)
-                for (let i = 0; i < subRegions.length; i++) {
-                    const [x, y] = r[i]
-                    p.cellObjects[x][y] = {
-                        type: "tetris",
-                        shape: normalizeRegion(subRegions[i]),
-                        color: 4
+    // octagrams
+    if (conf.octagramColorCount > 0) {
+        shuffle(regions)
+        let remainingOctagramCount = conf.octagramCount
+        let usedColors = new Set()
+        while (remainingOctagramCount > 0) {
+            // iterate regions, for each region, decide to put 1 or 2 octagrams
+            let assigned = false
+            for (let i = 0; i < regions.length && remainingOctagramCount > 0; i++) {
+                let availableCells = []
+                let availableSingleColors = []
+                let occupiedColors = []
+                let candidateColors = [...usedColors]
+                let colors = {}
+                for (const [x, y] of regions[i]) {
+                    let obj = p.cellObjects[x][y]
+                    if (obj === null) {
+                        availableCells.push([x, y])
+                    } else {
+                        incCounter(colors, obj.color)
                     }
                 }
+                for (let c in colors) {
+                    if (colors[c] == 1) {
+                        availableSingleColors.push(parseInt(c))
+                    } else {
+                        occupiedColors.push(parseInt(c))
+                    }
+                }
+
+                // fill candidate colors
+                for (let i = 0; i < 100 && candidateColors.length < conf.octagramColorCount; i++) {
+                    if (candidateColors.indexOf(i) == -1 && (!(i in colors) || availableSingleColors.indexOf(i) >= 0)) {
+                        candidateColors.push(i)
+                    }
+                }
+                // remove occupied colors from candidate colors
+                candidateColors = candidateColors.filter(c => occupiedColors.indexOf(c) == -1)
+                // limit single colors
+                availableSingleColors = availableSingleColors.filter(c => candidateColors.indexOf(c) >= 0)
+
+                //console.log(i, regions)
+                //console.log("used colors", usedColors)
+                //console.log("colors", colors, "occupied colors", occupiedColors, "availableSingleColors", availableSingleColors)
+                //console.log("candidateColors", candidateColors)
+
+                if (candidateColors.length == 0) continue
+                if (remainingOctagramCount == 1 && availableSingleColors.length == 0) continue
+                
+                shuffle(availableCells)
+                shuffle(availableSingleColors)
+                shuffle(candidateColors)
+                
+                let octagramCount = 0
+                // acell     acolor     p1     p2
+                // 0         any        0      0
+                // 1         0          0      0
+                // 1         >0         1      0
+                // >1        0          0      1
+                // >1        >0         0.5    0.5
+                if (remainingOctagramCount == 1) {
+                    octagramCount = 1
+                } else if (availableCells.length == 1 && availableSingleColors.length > 0) {
+                    octagramCount = 1
+                } else if (availableCells.length > 1 && availableSingleColors.length == 0) {
+                    octagramCount = 2
+                } else if (availableCells.length > 1 && availableSingleColors.length > 1) {
+                    octagramCount = Math.random() > 0.5? 1 : 2
+                }
+
+                if (octagramCount == 1) {
+                    const [x, y] = availableCells[0]
+                    p.cellObjects[x][y] = {
+                        type: "octagram",
+                        color: availableSingleColors[0]
+                    }
+                    usedColors.add(availableSingleColors[0])
+                    remainingOctagramCount--
+                    assigned = true
+                } else if (octagramCount == 2) {
+                    const [x1, y1] = availableCells[0]
+                    const [x2, y2] = availableCells[1]
+                    p.cellObjects[x1][y1] = {
+                        type: "octagram",
+                        color: candidateColors[0]
+                    }
+                    p.cellObjects[x2][y2] = {
+                        type: "octagram",
+                        color: candidateColors[0]
+                    }
+                    usedColors.add(candidateColors[0])
+                    remainingOctagramCount -= 2
+                    assigned = true
+                }
             }
+            if (!assigned) break
         }
-        return p
     }
+    return p
+}
 
 function generateRandomPath(s, c) {
         const trycount = 100;
@@ -547,6 +647,26 @@ export function checkPath(p, path) {
             }
             if (ss.length > 0 && !shape.checkComposition(s, ss)) {
                 r = false
+            }
+        }
+
+        // octagrams
+        for (const region of regions) {
+            let colors = {}
+            for (const [x, y] of region) {
+                const o = p.cellObjects[x][y]
+                if (o !== null) {
+                    incCounter(colors, o.color)
+                }
+            }
+            for (const [x, y] of region) {
+                const o = p.cellObjects[x][y]
+                if (o !== null && o.type == "octagram") {
+                    if (colors[o.color] != 2) {
+                        o.checkResult = false
+                        r = false
+                    }
+                }
             }
         }
 

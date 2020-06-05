@@ -93,3 +93,11 @@ export function nextPermutation(arr, less = (a,b)=>a<b) {
     reverse(arr, 0, arr.length-1)
     return false
 }
+
+export function incCounter(obj, p) {
+    if (p in obj) {
+        obj[p]++
+    } else {
+        obj[p] = 1
+    }
+}

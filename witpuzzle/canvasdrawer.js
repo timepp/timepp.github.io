@@ -88,16 +88,22 @@ export class CanvasDrawer {
     }
 
     drawSolution() {
+        let path = this.puzzle.path.map(v => [v[0] * this.cw, v[1] * this.ch])
+        path.push(this.endPoint)
         this.drawFrame()
-        this.drawPath(this.puzzle.path.map(v => [v[0] * this.cw, v[1] * this.ch]))
+        this.drawPath(path)
     }
     
+    /**
+     * frame := roads + gaps + start point(s) + end point(s) + hexagons
+     */
     drawFrame() {
         let puzzle = this.puzzle
         this.drawRoad()
-        this.drawBorderObjects()
+        this.drawBorderObjects(false, o => o.type === "gap")
         this.drawStartPoint(puzzle.startPoints[0], this.rc)
         this.drawEndPoint(puzzle.endPoints[0], puzzle.m, puzzle.n)
+        this.drawBorderObjects(false, o => o.type === "hexagon")
     }
 
     registerListeners() {
@@ -246,79 +252,66 @@ export class CanvasDrawer {
 
         this.completing = false
 
-
-        //console.log(m, n, x, y, x0, y0, x1, y1, x2, y2, xg, yg)
-
         // then check if there can be a direct line from (x1, y1) to (xg, yg)
         if (this.path.length > 1 && (x1 == xg || y1 == yg)) {
             // but if there are crosses blocking in the middle we need to avoid self cross 
-            
             let [xn, yn] = [xg, yg]
             if (this.saw) {
                 [xn, yn] = this.findMaxEndPointAvoidingSelfCross(x1, y1, xg, yg)
             }
-
             // console.log("case 1", x1, y1, x0, y0, xg, yg, xn, yn)
-            
             p0[0] = xn
             p0[1] = yn
         } else {
-
-        // if no, check if there can be a direct line from (x0, y0) to (xc, yc) to (xg, yg), 
-        // where (xc, yc) is a cross point
-        let [xc, yc] = [-1, -1]
-        if (xg % this.cw == 0 && y0 % this.ch == 0) {
-            [xc, yc] = [xg, y0]
-        } else if (yg % this.ch == 0 && x0 % this.cw == 0) {
-            [xc, yc] = [x0, yg]
-        }
-        if (xc != -1 && yc != -1) {
-            // console.log("case 2")
-            if (x1 != xc && y1 != yc) {
-                // x0, y0 is the cross point
-                // additional point will need
-                x1 = x0
-                y1 = y0
-                this.path.push([x0, y0])
-                p0 = this.path[this.path.length-1]
+            // if no, check if there can be a direct line from (x0, y0) to (xc, yc) to (xg, yg), 
+            // where (xc, yc) is a cross point
+            let [xc, yc] = [-1, -1]
+            if (xg % this.cw == 0 && y0 % this.ch == 0) {
+                [xc, yc] = [xg, y0]
+            } else if (yg % this.ch == 0 && x0 % this.cw == 0) {
+                [xc, yc] = [x0, yg]
             }
-            if (this.saw) {
-                let [xn, yn] = this.findMaxEndPointAvoidingSelfCross(x1, y1, xc, yc)
-                p0[0] = xn
-                p0[1] = yn
-                if (xn == xc && yn == yc) {
-                    let [xnn, ynn] = this.findMaxEndPointAvoidingSelfCross(xn, yn, xg, yg)
-                    this.path.push([xnn, ynn])
+            if (xc != -1 && yc != -1) {
+                // console.log("case 2")
+                if (x1 != xc && y1 != yc) {
+                    // x0, y0 is the cross point
+                    // additional point will need
+                    x1 = x0
+                    y1 = y0
+                    this.path.push([x0, y0])
+                    p0 = this.path[this.path.length - 1]
                 }
-            }
-            else {
-                this.path.pop()
-                this.path.push([xc, yc])
-                this.path.push([xg, yg])
-            }
-
-        }
-    }
-
-
-        
-
-                // reduce point on way backing
-                if (this.path.length > 2 && (x2 == x1 && x1 == xg || y2 == y1 && y1 == yg)) {
-                    p0 = this.path[this.path.length-1]
-                    p1 = this.path[this.path.length-2]
-                    p2 = this.path[this.path.length-3]
-                    if (p0[0] == p1[0] && p1[0] == p2[0] || p0[1] == p1[1] && p1[1] == p2[1]) {
-                        this.path.pop()
-                        this.path.pop()
-                        this.path.push(p0)
+                if (this.saw) {
+                    let [xn, yn] = this.findMaxEndPointAvoidingSelfCross(x1, y1, xc, yc)
+                    p0[0] = xn
+                    p0[1] = yn
+                    if (xn == xc && yn == yc) {
+                        let [xnn, ynn] = this.findMaxEndPointAvoidingSelfCross(xn, yn, xg, yg)
+                        this.path.push([xnn, ynn])
                     }
-
-                    // console.log("way backing", x2, y2, x1, y1, xg, yg)
                 }
+                else {
+                    this.path.pop()
+                    this.path.push([xc, yc])
+                    this.path.push([xg, yg])
+                }
+            }
+        }
 
-                this.drawFrame()
-                this.drawPath(this.path)
+        // reduce point on way backing
+        if (this.path.length > 2) {
+            p0 = this.path[this.path.length - 1]
+            p1 = this.path[this.path.length - 2]
+            p2 = this.path[this.path.length - 3]
+            if (p0[0] == p1[0] && p1[0] == p2[0] || p0[1] == p1[1] && p1[1] == p2[1]) {
+                this.path.pop()
+                this.path.pop()
+                this.path.push(p0)
+            }
+        }
+
+        this.drawFrame()
+        this.drawPath(this.path)
     }
 
     drawStartPoint(p, style) {
@@ -328,14 +321,15 @@ export class CanvasDrawer {
         this.ctx.fill()
     }
 
-    drawBorderObjects(showCheckResult) {
+    drawBorderObjects(showCheckResult, filterFunc) {
         for (let i = 0; i <= this.puzzle.m*2; i++) for (let j = 0; j <= this.puzzle.n*2; j++) {
-            this.drawBorderObject(this.puzzle.borderObjects[i][j], i, j, showCheckResult)
+            this.drawBorderObject(this.puzzle.borderObjects[i][j], i, j, showCheckResult, filterFunc)
         }
     }
 
-    drawBorderObject(obj, i, j, showCheckResult) {
+    drawBorderObject(obj, i, j, showCheckResult, filterFunc) {
         if (!obj) return
+        if (filterFunc && !filterFunc(obj)) return
         const color = showCheckResult && !obj.checkResult? "rgb(255,0,0)" : this.colorTheme[obj.color]
         if (obj.type === "hexagon") {
             this.drawHexagon(i * this.cw / 2, j * this.ch / 2, this.rw / 3, color)
@@ -388,6 +382,8 @@ export class CanvasDrawer {
             ctx.fillRect(i * this.cw + dx, j * this.ch + dy, w, w)
         } else if (obj.type === "tetris") {
             this.drawTetris(obj.shape, i, j, color)
+        } else if (obj.type === "octagram") {
+            this.drawOctagram(i, j, color)
         }
     }
 
@@ -405,6 +401,25 @@ export class CanvasDrawer {
         let ctx = this.ctx
         ctx.fillStyle = color
         ctx.fillRect()
+    }
+
+    drawOctagram(i, j, color) {
+        const [x, y] = [i * this.cw + this.cw / 2, j * this.ch + this.ch / 2]
+        let r = Math.min(this.cw, this.ch) / 5
+        this.ctx.fillStyle = color
+        this.ctx.beginPath()
+        this.ctx.moveTo(x, y + r)
+        this.ctx.lineTo(x - r, y)
+        this.ctx.lineTo(x, y - r)
+        this.ctx.lineTo(x + r, y)
+        this.ctx.fill()
+        r = r * Math.sqrt(2) / 2
+        this.ctx.beginPath()
+        this.ctx.moveTo(x + r, y + r)
+        this.ctx.lineTo(x - r, y + r)
+        this.ctx.lineTo(x - r, y - r)
+        this.ctx.lineTo(x + r, y - r)
+        this.ctx.fill()
     }
 
     drawTetris(shape, i, j, color) {
