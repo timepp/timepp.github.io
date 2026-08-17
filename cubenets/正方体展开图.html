@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>正方体展开图状态转换力导向图</title>
+    <!-- 引入 D3.js v7 -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3/dist/jszip.min.js"></script>
+    <style>
+        body { margin: 0; background-color: #fcfcfc; font-family: sans-serif; overflow: hidden; }
+        .link { fill: none; }
+        .node rect { stroke: #333; stroke-width: 1px; cursor: grab; }
+        .node:active rect { cursor: grabbing; }
+        .node text { font-size: 12px; pointer-events: none; fill: #333; font-weight: bold; }
+        #tooltip { position: absolute; background: white; border: 1px solid #ccc; padding: 5px; border-radius: 4px; display: none; pointer-events: none; font-size: 12px; }
+        #download-all { position: fixed; z-index: 10; top: 16px; right: 16px; border: 1px solid #333; border-radius: 4px; padding: 8px 12px; background: #fff; color: #222; font: inherit; cursor: pointer; }
+        #download-all:hover { background: #f0f0f0; }
+        #download-all:disabled { cursor: wait; opacity: 0.6; }
+        #legend { position: fixed; z-index: 10; top: 16px; left: 16px; display: grid; gap: 8px; padding: 10px 12px; border: 1px solid #ccc; border-radius: 4px; background: rgb(255 255 255 / 90%); color: #222; font-size: 13px; }
+        .legend-item { display: flex; align-items: center; gap: 9px; white-space: nowrap; }
+        .legend-line { width: 36px; height: 0; border-top: 3px solid; }
+        .legend-line.red { border-color: #e74c3c; }
+        .legend-line.green { border-color: #2ecc71; border-top-width: 2px; }
+        .legend-line.dashed { border-color: #7f8c8d; border-top-width: 2px; border-top-style: dashed; }
+        .legend-description { max-width: 300px; margin: 3px 0 0; padding-top: 9px; border-top: 1px solid #ddd; line-height: 1.6; color: #444; }
+    </style>
+</head>
+<body>
+
+<div id="tooltip"></div>
+<div id="legend" aria-label="连线图例">
+    <div class="legend-item"><span class="legend-line red"></span><span>红线：单格滚动</span></div>
+    <div class="legend-item"><span class="legend-line green"></span><span>绿线：两格滚动</span></div>
+    <div class="legend-item"><span class="legend-line dashed"></span><span>虚线：三格滚动</span></div>
+    <p class="legend-description">若某个顶点恰好连接三个面，则从该顶点伸出的两条外边，在折成立方体后对应同一条棱。将展开图的一部分沿其中一条外边“滚动”到另一条外边，所得展开图与原图等价。</p>
+</div>
+<button id="download-all" type="button" title="下载全部正方体展开图 PNG">下载全部 PNG</button>
+<svg id="graph" width="100vw" height="100vh"></svg>
+
+<script>
+// 11 种能折叠成正方体的六格展开图及其节点数据
+const cubeNets = [
+    { id: "T", type: "141", color: "#f39c9c", cells: [[0, 0], [1, 0], [2, 0], [1, 1], [1, 2], [1, 3]] },
+    { id: "海马", type: "141", color: "#f39c9c", cells: [[0, 1], [1, 0], [1, 1], [1, 2], [1, 3], [2, 0]] },
+    { id: "5", type: "141", color: "#f39c9c", cells:  [[0, 3], [1, 0], [1, 1], [1, 2], [1, 3], [2, 1]] },
+    { id: "S", type: "141", color: "#f39c9c", cells:  [[0, 3], [1, 0], [1, 1], [1, 2], [1, 3], [2, 0]] },
+    { id: "十字", type: "141", color: "#f39c9c", cells: [[0, 1], [1, 0], [1, 1], [1, 2], [1, 3], [2, 1]] },
+    { id: "X", type: "141", color: "#f39c9c", cells: [[0, 1], [1, 0], [1, 1], [1, 2], [1, 3], [2, 2]] },
+    { id: "龙", type: "231", color: "#95f5f6", cells: [[0, 1], [1, 1], [2, 0], [2, 1], [2, 2], [3, 0]] },
+    { id: "木马", type: "231", color: "#95f5f6", cells: [[0, 1], [1, 1], [1, 2], [2, 0], [2, 1], [3, 0]] },
+    { id: "蛇", type: "231", color: "#95f5f6", cells: [[0, 1], [0, 2], [1, 1], [2, 0], [2, 1], [3, 0]] },
+    { id: "闪电", type: "33", color: "#ee49ee", cells: [[0, 0], [0, 1], [0, 2], [1, 2], [1, 3], [1, 4]] },
+    { id: "楼梯", type: "222", color: "#3498db", cells: [[0, 2], [1, 1], [1, 2], [2, 0], [2, 1], [3, 0]] },
+];
+
+function renderCubeNetPng(cubeNet) {
+    const exportCellSize = 64;
+    const padding = 16;
+    const pixelRatio = 2;
+    const xValues = cubeNet.cells.map(cell => cell[0]);
+    const yValues = cubeNet.cells.map(cell => cell[1]);
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    const minY = Math.min(...yValues);
+    const maxY = Math.max(...yValues);
+    const width = (maxX - minX + 1) * exportCellSize + padding * 2;
+    const height = (maxY - minY + 1) * exportCellSize + padding * 2;
+    const canvas = document.createElement("canvas");
+    canvas.width = width * pixelRatio;
+    canvas.height = height * pixelRatio;
+
+    const context = canvas.getContext("2d");
+    context.scale(pixelRatio, pixelRatio);
+    context.fillStyle = cubeNet.color;
+    context.strokeStyle = "#333";
+    context.lineWidth = 2;
+
+    for (const [x, y] of cubeNet.cells) {
+        const drawX = padding + (x - minX) * exportCellSize;
+        const drawY = padding + (y - minY) * exportCellSize;
+        context.fillRect(drawX, drawY, exportCellSize, exportCellSize);
+        context.strokeRect(drawX, drawY, exportCellSize, exportCellSize);
+    }
+
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("PNG 生成失败")), "image/png");
+    });
+}
+
+function renderGraphPng() {
+    const graph = document.querySelector("#graph");
+    const width = graph.clientWidth;
+    const height = graph.clientHeight;
+    const pixelRatio = 2;
+    const graphClone = graph.cloneNode(true);
+    graphClone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    graphClone.setAttribute("width", width);
+    graphClone.setAttribute("height", height);
+
+    const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
+    style.textContent = `
+        .link { fill: none; }
+        .node rect { stroke: #333; stroke-width: 1px; }
+        .node text { font: bold 12px sans-serif; fill: #333; }
+    `;
+    graphClone.prepend(style);
+
+    const svgBlob = new Blob([new XMLSerializer().serializeToString(graphClone)], { type: "image/svg+xml;charset=utf-8" });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = width * pixelRatio;
+            canvas.height = height * pixelRatio;
+            const context = canvas.getContext("2d");
+            context.scale(pixelRatio, pixelRatio);
+            context.fillStyle = "#fcfcfc";
+            context.fillRect(0, 0, width, height);
+            context.drawImage(image, 0, 0, width, height);
+            URL.revokeObjectURL(svgUrl);
+            canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("状态转换图 PNG 生成失败")), "image/png");
+        };
+        image.onerror = () => {
+            URL.revokeObjectURL(svgUrl);
+            reject(new Error("状态转换图 SVG 加载失败"));
+        };
+        image.src = svgUrl;
+    });
+}
+
+document.querySelector("#download-all").addEventListener("click", async event => {
+    const button = event.currentTarget;
+    button.disabled = true;
+    button.textContent = "正在生成...";
+
+    try {
+        const zip = new JSZip();
+        const pngFiles = await Promise.all(cubeNets.map(renderCubeNetPng));
+        pngFiles.forEach((png, index) => zip.file(`${index + 1}-${cubeNets[index].id}.png`, png));
+        zip.file("正方体展开图-状态转换图.png", await renderGraphPng());
+
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        const downloadUrl = URL.createObjectURL(zipBlob);
+        const downloadLink = document.createElement("a");
+        downloadLink.href = downloadUrl;
+        downloadLink.download = "cube-nets.zip";
+        downloadLink.click();
+        setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    } finally {
+        button.disabled = false;
+        button.textContent = "下载全部 PNG";
+    }
+});
+
+// 2. 定义连线数据；只有红线参与力导向布局
+const links = [
+    // --- 红线：转动 1 个块 (力最大，强拉近) ---
+    { source: "T", target: "海马", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "海马", target: "十字", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "十字", target: "X", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "X", target: "5", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "5", target: "S", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+
+    { source: "海马", target: "5", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "十字", target: "龙", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "木马", target: "X", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "木马", target: "蛇", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "木马", target: "龙", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "木马", target: "楼梯", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+    { source: "蛇", target: "5", forceType: "red", color: "#e74c3c", dash: "0", strength: 1.2 },
+
+    
+    // --- 绿线：转动 2 个块（仅展示，不影响布局）---
+    { source: "海马", target: "龙", forceType: "green", color: "#2ecc71", dash: "0", strength: 0.3 },
+    { source: "海马", target: "楼梯", forceType: "green", color: "#2ecc71", dash: "0", strength: 0.3 },
+    { source: "十字", target: "木马", forceType: "green", color: "#2ecc71", dash: "0", strength: 0.3 },
+    { source: "木马", target: "5", forceType: "green", color: "#2ecc71", dash: "0", strength: 0.3 },
+    { source: "龙", target: "蛇", forceType: "green", color: "#2ecc71", dash: "0", strength: 0.3 },
+    { source: "楼梯", target: "蛇", forceType: "green", color: "#2ecc71", dash: "0", strength: 0.3 },
+    { source: "X", target: "蛇", forceType: "green", color: "#2ecc71", dash: "0", strength: 0.3 },
+    { source: "X", target: "S", forceType: "green", color: "#2ecc71", dash: "0", strength: 0.3 },
+
+    // --- 虚线：转动 3 个块（仅展示，不影响布局）---
+    { source: "T", target: "闪电", forceType: "dashed", color: "#7f8c8d", dash: "5,5", strength: 0.3 },
+    { source: "木马", target: "X", forceType: "dashed", color: "#7f8c8d", dash: "5,5", strength: 0.3 },
+    { source: "木马", target: "蛇", forceType: "dashed", color: "#7f8c8d", dash: "5,5", strength: 0.3 },
+    { source: "5", target: "楼梯", forceType: "dashed", color: "#7f8c8d", dash: "5,5", strength: 0.3 },
+];
+
+// 3. 初始化画布大小
+const width = window.innerWidth;
+const height = window.innerHeight;
+const svg = d3.select("#graph").attr("width", width).attr("height", height);
+
+const cubeNetById = new Map(cubeNets.map(cubeNet => [cubeNet.id, cubeNet]));
+
+// 4. 创建力导向仿真器
+const simulation = d3.forceSimulation(cubeNets)
+    .force("link", d3.forceLink(links)
+        .id(d => d.id)
+        .strength(d => d.strength)
+        .distance(100))
+    .force("charge", d3.forceManyBody().strength(-400))
+    .force("collision", d3.forceCollide(44))
+    .force("center", d3.forceCenter(width / 2, height / 2));
+
+// 5. 绘制连线
+const link = svg.append("g")
+    .selectAll("path")
+    .data([...links].sort((a, b) => (a.forceType === "red") - (b.forceType === "red")))
+    .join("path")
+    .attr("class", "link")
+    .attr("stroke", d => d.color)
+    .attr("stroke-width", d => d.forceType === "red" ? 3 : 1.5)
+    .attr("stroke-opacity", d => d.forceType === "red" ? 0.9 : d.forceType === "green" ? 0.6 : 0.45)
+    .attr("stroke-dasharray", d => d.dash);
+
+// 6. 绘制节点容器
+const node = svg.append("g")
+    .selectAll(".node")
+    .data(cubeNets)
+    .join("g")
+    .attr("class", "node")
+    .call(d3.drag() // 绑定拖拽事件
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+// 7. 根据六格坐标动态绘制正方体展开图，并以图形中心为节点原点
+const cellSize = 12;
+node.each(function(d) {
+    const xValues = d.cells.map(cell => cell[0]);
+    const yValues = d.cells.map(cell => cell[1]);
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    const minY = Math.min(...yValues);
+    const maxY = Math.max(...yValues);
+    const offsetX = -(minX + maxX + 1) * cellSize / 2;
+    const offsetY = -(minY + maxY + 1) * cellSize / 2;
+
+    d3.select(this)
+        .selectAll("rect")
+        .data(d.cells)
+        .join("rect")
+        .attr("x", cell => offsetX + cell[0] * cellSize)
+        .attr("y", cell => offsetY + cell[1] * cellSize)
+        .attr("width", cellSize)
+        .attr("height", cellSize)
+        .attr("rx", 1)
+        .attr("fill", d.color);
+
+    d.labelY = (maxY - minY + 1) * cellSize / 2 + 14;
+});
+
+// 8. 给节点加上文字标签
+node.append("text")
+    .attr("text-anchor", "middle")
+    .attr("y", d => d.labelY)
+    .text(d => d.id);
+
+// 9. 鼠标悬停提示框（Tooltip）
+const tooltip = d3.select("#tooltip");
+node.on("mouseover", (event, d) => {
+    tooltip.style("display", "block").html(`<strong>${d.id}</strong>`);
+}).on("mousemove", (event) => {
+    tooltip.style("top", (event.pageY + 10) + "px").style("left", (event.pageX + 10) + "px");
+}).on("mouseout", () => {
+    tooltip.style("display", "none");
+});
+
+function getLinkPath(linkData) {
+    const source = typeof linkData.source === "object" ? linkData.source : cubeNetById.get(linkData.source);
+    const target = typeof linkData.target === "object" ? linkData.target : cubeNetById.get(linkData.target);
+
+    if (linkData.forceType === "red") {
+        return `M${source.x},${source.y} L${target.x},${target.y}`;
+    }
+
+    const deltaX = target.x - source.x;
+    const deltaY = target.y - source.y;
+    const distance = Math.hypot(deltaX, deltaY) || 1;
+    const bend = linkData.forceType === "green" ? 28 : -38;
+    const controlX = (source.x + target.x) / 2 - deltaY / distance * bend;
+    const controlY = (source.y + target.y) / 2 + deltaX / distance * bend;
+    return `M${source.x},${source.y} Q${controlX},${controlY} ${target.x},${target.y}`;
+}
+
+// 10. 核心：每一步仿真物理计算时，更新线和点的位置
+simulation.on("tick", () => {
+    link
+        .attr("d", getLinkPath);
+
+    node
+        .attr("transform", d => `translate(${d.x}, ${d.y})`);
+});
+
+// 11. 拖拽交互函数
+function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+}
+function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+}
+function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+}
+
+// 窗口大小改变时自适应
+window.addEventListener("resize", () => {
+    svg.attr("width", window.innerWidth).attr("height", window.innerHeight);
+    simulation.force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2)).restart();
+});
+</script>
+
+</body>
+</html>

@@ -9,6 +9,43 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
+    <style>
+      #main_content p {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      #main_content p a {
+        display: flex;
+        /* width: 220px;
+        height: 180px; */
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-sizing: border-box;
+        border: 1px solid transparent;
+        text-align: center;
+        transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      }
+
+      #main_content p a:hover,
+      #main_content p a:focus-visible {
+        background-color: rgba(255, 255, 255, 0.08);
+        /* border-color: #63c0f5; */
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        transform: scale(1.05);
+      }
+
+      #main_content p img {
+        width: 300px;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+    </style>
+
     <title>timepp</title>
     
   </head>
@@ -24,18 +61,20 @@
     <div class="container">
       <section id="main_content">
         <p>
-          <a href="wp/index.html">witpuzzle</a><br/>
-          <a href="bdp/index.html">binary data parser</a><br/>
-          <a href="cube/index.html">cube</a><br/>
-          <a href="cube/cube.html">cube algs</a>
-          <a href="article/lorentz.html">推导洛伦兹变换</a>
-          <a href="kana.html">假名</a>
-          <a href="browsertest/index.html">browser test</a><br/>
-          <a href="mimetest.html">mime test</a><br/>
+          <a href="wp/index.html"><img src="./wp/witpuzzle.png" alt="">witpuzzle</a>
+          <a href="bdp/index.html"><img src="./bdp/binary-data-parser.png" alt="">binary data parser</a>
+          <a href="cube/index.html"><img src="./images/cube.png" alt="">cube</a>
+          <a href="./cube-alg/cube.html"><img src="./cube-alg/logo.png" alt="">cube algs</a>
+          <a href="article/lorentz.html"><img src="./article/lorentz_physics_event_relationship_2_frames.png" alt="">推导洛伦兹变换</a>
+          <a href="kana.html"><img src="./images/kana.png" alt="">假名</a>
+          <a href="./cubenets/正方体展开图.html"><img src="./cubenets/正方体展开-状态变换图.png" alt="">正方体展开图</a>
         </p>
       </section>
+      <br>
+      <hr>
+      <a href="browsertest/index.html">browser test</a>
+      <a href="mimetest.html">mime test</a>
     </div>
 
-    
   </body>
 </html>
