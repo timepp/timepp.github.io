@@ -1,0 +1,266 @@
+{
+    "ID": "RIFF",
+    "type": "Compound",
+    "interpretedValue": "WEBP",
+    "startPos": 0,
+    "endPos": 3730,
+    "subRegions": [
+      {
+        "ID": "FourCC",
+        "type": "NullTerminatedString",
+        "value": "RIFF",
+        "startPos": 0,
+        "endPos": 4
+      },
+      {
+        "ID": "Size",
+        "type": "Size",
+        "bigValue": "3722",
+        "value": 3722,
+        "description": "RIFF chunk size",
+        "startPos": 4,
+        "endPos": 8,
+        "endian": "LE"
+      },
+      {
+        "ID": "FormType",
+        "type": "String",
+        "value": "WEBP",
+        "startPos": 8,
+        "endPos": 12
+      },
+      {
+        "ID": "VP8X",
+        "type": "Compound",
+        "interpretedValue": "VP8X",
+        "startPos": 12,
+        "endPos": 30,
+        "subRegions": [
+          {
+            "ID": "FourCC",
+            "type": "String",
+            "value": "VP8X",
+            "startPos": 12,
+            "endPos": 16
+          },
+          {
+            "ID": "Size",
+            "type": "Size",
+            "bigValue": "10",
+            "value": 10,
+            "description": "RIFF chunk size",
+            "startPos": 16,
+            "endPos": 20,
+            "endian": "LE"
+          },
+          {
+            "ID": "flags",
+            "type": "Compound",
+            "startPos": 20,
+            "endPos": 21,
+            "subRegions": [
+              {
+                "ID": "reserved",
+                "type": "UnsignedNumber",
+                "endian": "BE",
+                "value": 0,
+                "bigValue": "0",
+                "description": "Reserved bits, must be 0",
+                "startPos": 20,
+                "endPos": 20
+              },
+              {
+                "ID": "icc",
+                "type": "UnsignedNumber",
+                "endian": "BE",
+                "value": 1,
+                "bigValue": "1",
+                "description": "Image contains an ICC profile",
+                "startPos": 20,
+                "endPos": 20
+              },
+              {
+                "ID": "alpha",
+                "type": "UnsignedNumber",
+                "endian": "BE",
+                "value": 0,
+                "bigValue": "0",
+                "description": "Image contains alpha values mixed with the main image",
+                "startPos": 20,
+                "endPos": 20
+              },
+              {
+                "ID": "exif",
+                "type": "UnsignedNumber",
+                "endian": "BE",
+                "value": 1,
+                "bigValue": "1",
+                "description": "Image contains EXIF metadata",
+                "startPos": 20,
+                "endPos": 20
+              },
+              {
+                "ID": "xmp",
+                "type": "UnsignedNumber",
+                "endian": "BE",
+                "value": 0,
+                "bigValue": "0",
+                "description": "Image contains XMP metadata",
+                "startPos": 20,
+                "endPos": 20
+              },
+              {
+                "ID": "animation",
+                "type": "UnsignedNumber",
+                "endian": "BE",
+                "value": 0,
+                "bigValue": "0",
+                "description": "Image is an animation",
+                "startPos": 20,
+                "endPos": 20
+              },
+              {
+                "ID": "reserved",
+                "type": "UnsignedNumber",
+                "endian": "BE",
+                "value": 0,
+                "bigValue": "0",
+                "description": "Reserved bits, must be 0",
+                "startPos": 20,
+                "endPos": 20
+              }
+            ],
+            "interpretedValue": "icc, exif"
+          },
+          {
+            "ID": "reserved",
+            "type": "UnsignedNumber",
+            "bigValue": "0",
+            "value": 0,
+            "startPos": 21,
+            "endPos": 24,
+            "endian": "LE"
+          },
+          {
+            "ID": "canvasWidth",
+            "type": "UnsignedNumber",
+            "bigValue": "221",
+            "value": 221,
+            "description": "",
+            "startPos": 24,
+            "endPos": 27,
+            "endian": "LE",
+            "interpretedValue": "222"
+          },
+          {
+            "ID": "canvasHeight",
+            "type": "UnsignedNumber",
+            "bigValue": "309",
+            "value": 309,
+            "description": "",
+            "startPos": 27,
+            "endPos": 30,
+            "endian": "LE",
+            "interpretedValue": "310"
+          }
+        ]
+      },
+      {
+        "ID": "ICCP",
+        "type": "Compound",
+        "interpretedValue": "ICCP",
+        "startPos": 30,
+        "endPos": 494,
+        "subRegions": [
+          {
+            "ID": "FourCC",
+            "type": "String",
+            "value": "ICCP",
+            "startPos": 30,
+            "endPos": 34
+          },
+          {
+            "ID": "Size",
+            "type": "Size",
+            "bigValue": "456",
+            "value": 456,
+            "description": "RIFF chunk size",
+            "startPos": 34,
+            "endPos": 38,
+            "endian": "LE"
+          },
+          {
+            "ID": "data",
+            "type": "GeneralData",
+            "startPos": 38,
+            "endPos": 494
+          }
+        ]
+      },
+      {
+        "ID": "VP8 ",
+        "type": "Compound",
+        "interpretedValue": "VP8 ",
+        "startPos": 494,
+        "endPos": 3548,
+        "subRegions": [
+          {
+            "ID": "FourCC",
+            "type": "String",
+            "value": "VP8 ",
+            "startPos": 494,
+            "endPos": 498
+          },
+          {
+            "ID": "Size",
+            "type": "Size",
+            "bigValue": "3046",
+            "value": 3046,
+            "description": "RIFF chunk size",
+            "startPos": 498,
+            "endPos": 502,
+            "endian": "LE"
+          },
+          {
+            "ID": "data",
+            "type": "GeneralData",
+            "startPos": 502,
+            "endPos": 3548
+          }
+        ]
+      },
+      {
+        "ID": "EXIF",
+        "type": "Compound",
+        "interpretedValue": "EXIF",
+        "startPos": 3548,
+        "endPos": 3730,
+        "subRegions": [
+          {
+            "ID": "FourCC",
+            "type": "String",
+            "value": "EXIF",
+            "startPos": 3548,
+            "endPos": 3552
+          },
+          {
+            "ID": "Size",
+            "type": "Size",
+            "bigValue": "174",
+            "value": 174,
+            "description": "RIFF chunk size",
+            "startPos": 3552,
+            "endPos": 3556,
+            "endian": "LE"
+          },
+          {
+            "ID": "data",
+            "type": "GeneralData",
+            "startPos": 3556,
+            "endPos": 3730
+          }
+        ]
+      }
+    ]
+  }
+  

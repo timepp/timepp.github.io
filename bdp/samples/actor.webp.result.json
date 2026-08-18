@@ -1,0 +1,972 @@
+{
+  "ID": "RIFF",
+  "type": "Compound",
+  "interpretedValue": "WEBP",
+  "startPos": 0,
+  "endPos": 3730,
+  "subRegions": [
+    {
+      "ID": "FourCC",
+      "type": "NullTerminatedString",
+      "value": "RIFF",
+      "startPos": 0,
+      "endPos": 4
+    },
+    {
+      "ID": "Size",
+      "type": "Size",
+      "bigValue": "3722",
+      "value": 3722,
+      "description": "RIFF chunk size",
+      "startPos": 4,
+      "endPos": 8,
+      "endian": "LE"
+    },
+    {
+      "ID": "FormType",
+      "type": "String",
+      "value": "WEBP",
+      "startPos": 8,
+      "endPos": 12
+    },
+    {
+      "ID": "VP8X",
+      "type": "Compound",
+      "interpretedValue": "VP8X",
+      "startPos": 12,
+      "endPos": 30,
+      "subRegions": [
+        {
+          "ID": "FourCC",
+          "type": "String",
+          "value": "VP8X",
+          "startPos": 12,
+          "endPos": 16
+        },
+        {
+          "ID": "Size",
+          "type": "Size",
+          "bigValue": "10",
+          "value": 10,
+          "description": "RIFF chunk size",
+          "startPos": 16,
+          "endPos": 20,
+          "endian": "LE"
+        },
+        {
+          "ID": "flags",
+          "type": "Compound",
+          "startPos": 20,
+          "endPos": 21,
+          "subRegions": [
+            {
+              "ID": "reserved",
+              "type": "UnsignedNumber",
+              "endian": "BE",
+              "value": 0,
+              "bigValue": "0",
+              "description": "Reserved bits, must be 0",
+              "startPos": 20,
+              "endPos": 20
+            },
+            {
+              "ID": "icc",
+              "type": "UnsignedNumber",
+              "endian": "BE",
+              "value": 1,
+              "bigValue": "1",
+              "description": "Image contains an ICC profile",
+              "startPos": 20,
+              "endPos": 20
+            },
+            {
+              "ID": "alpha",
+              "type": "UnsignedNumber",
+              "endian": "BE",
+              "value": 0,
+              "bigValue": "0",
+              "description": "Image contains alpha values mixed with the main image",
+              "startPos": 20,
+              "endPos": 20
+            },
+            {
+              "ID": "exif",
+              "type": "UnsignedNumber",
+              "endian": "BE",
+              "value": 1,
+              "bigValue": "1",
+              "description": "Image contains EXIF metadata",
+              "startPos": 20,
+              "endPos": 20
+            },
+            {
+              "ID": "xmp",
+              "type": "UnsignedNumber",
+              "endian": "BE",
+              "value": 0,
+              "bigValue": "0",
+              "description": "Image contains XMP metadata",
+              "startPos": 20,
+              "endPos": 20
+            },
+            {
+              "ID": "animation",
+              "type": "UnsignedNumber",
+              "endian": "BE",
+              "value": 0,
+              "bigValue": "0",
+              "description": "Image is an animation",
+              "startPos": 20,
+              "endPos": 20
+            },
+            {
+              "ID": "reserved",
+              "type": "UnsignedNumber",
+              "endian": "BE",
+              "value": 0,
+              "bigValue": "0",
+              "description": "Reserved bits, must be 0",
+              "startPos": 20,
+              "endPos": 20
+            }
+          ],
+          "interpretedValue": "icc, exif"
+        },
+        {
+          "ID": "reserved",
+          "type": "UnsignedNumber",
+          "bigValue": "0",
+          "value": 0,
+          "startPos": 21,
+          "endPos": 24,
+          "endian": "LE"
+        },
+        {
+          "ID": "canvasWidth",
+          "type": "UnsignedNumber",
+          "bigValue": "221",
+          "value": 221,
+          "description": "",
+          "startPos": 24,
+          "endPos": 27,
+          "endian": "LE",
+          "interpretedValue": "222"
+        },
+        {
+          "ID": "canvasHeight",
+          "type": "UnsignedNumber",
+          "bigValue": "309",
+          "value": 309,
+          "description": "",
+          "startPos": 27,
+          "endPos": 30,
+          "endian": "LE",
+          "interpretedValue": "310"
+        }
+      ]
+    },
+    {
+      "ID": "ICCP",
+      "type": "Compound",
+      "interpretedValue": "ICCP",
+      "startPos": 30,
+      "endPos": 494,
+      "subRegions": [
+        {
+          "ID": "FourCC",
+          "type": "String",
+          "value": "ICCP",
+          "startPos": 30,
+          "endPos": 34
+        },
+        {
+          "ID": "Size",
+          "type": "Size",
+          "bigValue": "456",
+          "value": 456,
+          "description": "RIFF chunk size",
+          "startPos": 34,
+          "endPos": 38,
+          "endian": "LE"
+        },
+        {
+          "ID": "data",
+          "type": "GeneralData",
+          "startPos": 38,
+          "endPos": 494
+        }
+      ]
+    },
+    {
+      "ID": "VP8 ",
+      "type": "Compound",
+      "interpretedValue": "VP8 ",
+      "startPos": 494,
+      "endPos": 3548,
+      "subRegions": [
+        {
+          "ID": "FourCC",
+          "type": "String",
+          "value": "VP8 ",
+          "startPos": 494,
+          "endPos": 498
+        },
+        {
+          "ID": "Size",
+          "type": "Size",
+          "bigValue": "3046",
+          "value": 3046,
+          "description": "RIFF chunk size",
+          "startPos": 498,
+          "endPos": 502,
+          "endian": "LE"
+        },
+        {
+          "ID": "data",
+          "type": "GeneralData",
+          "startPos": 502,
+          "endPos": 3548
+        }
+      ]
+    },
+    {
+      "ID": "EXIF",
+      "type": "Compound",
+      "interpretedValue": "EXIF",
+      "startPos": 3548,
+      "endPos": 3730,
+      "subRegions": [
+        {
+          "ID": "FourCC",
+          "type": "String",
+          "value": "EXIF",
+          "startPos": 3548,
+          "endPos": 3552
+        },
+        {
+          "ID": "Size",
+          "type": "Size",
+          "bigValue": "174",
+          "value": 174,
+          "description": "RIFF chunk size",
+          "startPos": 3552,
+          "endPos": 3556,
+          "endian": "LE"
+        },
+        {
+          "ID": "ExifData",
+          "type": "Compound",
+          "interpretedValue": "",
+          "startPos": 3556,
+          "endPos": 3730,
+          "subRegions": [
+            {
+              "ID": "ID",
+              "type": "String",
+              "value": "II",
+              "startPos": 3556,
+              "endPos": 3558
+            },
+            {
+              "ID": "Version",
+              "type": "UnsignedNumber",
+              "bigValue": "42",
+              "value": 42,
+              "startPos": 3558,
+              "endPos": 3560,
+              "endian": "LE"
+            },
+            {
+              "ID": "Offset",
+              "type": "UnsignedNumber",
+              "bigValue": "8",
+              "value": 8,
+              "description": "Offset to the first IFD (Image File Directory)",
+              "startPos": 3560,
+              "endPos": 3564,
+              "endian": "LE"
+            },
+            {
+              "ID": "IFD",
+              "type": "Compound",
+              "interpretedValue": "",
+              "startPos": 3564,
+              "endPos": 3675,
+              "subRegions": [
+                {
+                  "ID": "Count",
+                  "type": "UnsignedNumber",
+                  "bigValue": "6",
+                  "value": 6,
+                  "startPos": 3564,
+                  "endPos": 3566,
+                  "endian": "LE"
+                },
+                {
+                  "ID": "Tag 0",
+                  "type": "Compound",
+                  "interpretedValue": "Orientation",
+                  "startPos": 3566,
+                  "endPos": 3578,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "274",
+                      "value": 274,
+                      "startPos": 3566,
+                      "endPos": 3568,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "3",
+                      "value": 3,
+                      "description": "",
+                      "startPos": 3568,
+                      "endPos": 3570,
+                      "endian": "LE",
+                      "interpretedValue": "SHORT"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3570,
+                      "endPos": 3574,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Data",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3574,
+                      "endPos": 3576,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Padding",
+                      "type": "GeneralData",
+                      "startPos": 3576,
+                      "endPos": 3578
+                    }
+                  ]
+                },
+                {
+                  "ID": "Tag 1",
+                  "type": "Compound",
+                  "interpretedValue": "XResolution",
+                  "startPos": 3578,
+                  "endPos": 3590,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "282",
+                      "value": 282,
+                      "startPos": 3578,
+                      "endPos": 3580,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "5",
+                      "value": 5,
+                      "description": "",
+                      "startPos": 3580,
+                      "endPos": 3582,
+                      "endian": "LE",
+                      "interpretedValue": "RATIONAL"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3582,
+                      "endPos": 3586,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataOffset",
+                      "type": "UnsignedNumber",
+                      "bigValue": "86",
+                      "value": 86,
+                      "startPos": 3586,
+                      "endPos": 3590,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "XResolution",
+                      "type": "Compound",
+                      "interpretedValue": "96",
+                      "startPos": 3642,
+                      "endPos": 3650,
+                      "subRegions": [
+                        {
+                          "ID": "numerator",
+                          "type": "UnsignedNumber",
+                          "bigValue": "96",
+                          "value": 96,
+                          "startPos": 3642,
+                          "endPos": 3646,
+                          "endian": "LE"
+                        },
+                        {
+                          "ID": "denominator",
+                          "type": "UnsignedNumber",
+                          "bigValue": "1",
+                          "value": 1,
+                          "startPos": 3646,
+                          "endPos": 3650,
+                          "endian": "LE"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ID": "Tag 2",
+                  "type": "Compound",
+                  "interpretedValue": "YResolution",
+                  "startPos": 3590,
+                  "endPos": 3602,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "283",
+                      "value": 283,
+                      "startPos": 3590,
+                      "endPos": 3592,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "5",
+                      "value": 5,
+                      "description": "",
+                      "startPos": 3592,
+                      "endPos": 3594,
+                      "endian": "LE",
+                      "interpretedValue": "RATIONAL"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3594,
+                      "endPos": 3598,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataOffset",
+                      "type": "UnsignedNumber",
+                      "bigValue": "94",
+                      "value": 94,
+                      "startPos": 3598,
+                      "endPos": 3602,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "YResolution",
+                      "type": "Compound",
+                      "interpretedValue": "96",
+                      "startPos": 3650,
+                      "endPos": 3658,
+                      "subRegions": [
+                        {
+                          "ID": "numerator",
+                          "type": "UnsignedNumber",
+                          "bigValue": "96",
+                          "value": 96,
+                          "startPos": 3650,
+                          "endPos": 3654,
+                          "endian": "LE"
+                        },
+                        {
+                          "ID": "denominator",
+                          "type": "UnsignedNumber",
+                          "bigValue": "1",
+                          "value": 1,
+                          "startPos": 3654,
+                          "endPos": 3658,
+                          "endian": "LE"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ID": "Tag 3",
+                  "type": "Compound",
+                  "interpretedValue": "ResolutionUnit",
+                  "startPos": 3602,
+                  "endPos": 3614,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "296",
+                      "value": 296,
+                      "startPos": 3602,
+                      "endPos": 3604,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "3",
+                      "value": 3,
+                      "description": "",
+                      "startPos": 3604,
+                      "endPos": 3606,
+                      "endian": "LE",
+                      "interpretedValue": "SHORT"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3606,
+                      "endPos": 3610,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Data",
+                      "type": "UnsignedNumber",
+                      "bigValue": "2",
+                      "value": 2,
+                      "startPos": 3610,
+                      "endPos": 3612,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Padding",
+                      "type": "GeneralData",
+                      "startPos": 3612,
+                      "endPos": 3614
+                    }
+                  ]
+                },
+                {
+                  "ID": "Tag 4",
+                  "type": "Compound",
+                  "interpretedValue": "Software",
+                  "startPos": 3614,
+                  "endPos": 3626,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "305",
+                      "value": 305,
+                      "startPos": 3614,
+                      "endPos": 3616,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "2",
+                      "value": 2,
+                      "description": "",
+                      "startPos": 3616,
+                      "endPos": 3618,
+                      "endian": "LE",
+                      "interpretedValue": "ASCII"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "17",
+                      "value": 17,
+                      "startPos": 3618,
+                      "endPos": 3622,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataOffset",
+                      "type": "UnsignedNumber",
+                      "bigValue": "102",
+                      "value": 102,
+                      "startPos": 3622,
+                      "endPos": 3626,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Software",
+                      "type": "String",
+                      "value": "paint.net 5.0.13",
+                      "startPos": 3658,
+                      "endPos": 3675
+                    }
+                  ]
+                },
+                {
+                  "ID": "Tag 5",
+                  "type": "Compound",
+                  "interpretedValue": "ExifOffset",
+                  "startPos": 3626,
+                  "endPos": 3638,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "34665",
+                      "value": 34665,
+                      "startPos": 3626,
+                      "endPos": 3628,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "4",
+                      "value": 4,
+                      "description": "",
+                      "startPos": 3628,
+                      "endPos": 3630,
+                      "endian": "LE",
+                      "interpretedValue": "LONG"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3630,
+                      "endPos": 3634,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Data",
+                      "type": "UnsignedNumber",
+                      "bigValue": "120",
+                      "value": 120,
+                      "startPos": 3634,
+                      "endPos": 3638,
+                      "endian": "LE"
+                    }
+                  ]
+                },
+                {
+                  "ID": "NextIFDOffset",
+                  "type": "UnsignedNumber",
+                  "bigValue": "0",
+                  "value": 0,
+                  "startPos": 3638,
+                  "endPos": 3642,
+                  "endian": "LE"
+                },
+                {
+                  "ID": "DataArea",
+                  "type": "Compound",
+                  "interpretedValue": "",
+                  "startPos": 3642,
+                  "endPos": 3675,
+                  "subRegions": [
+                    {
+                      "ID": "XResolution",
+                      "type": "Compound",
+                      "interpretedValue": "96",
+                      "startPos": 3642,
+                      "endPos": 3650,
+                      "subRegions": [
+                        {
+                          "ID": "numerator",
+                          "type": "UnsignedNumber",
+                          "bigValue": "96",
+                          "value": 96,
+                          "startPos": 3642,
+                          "endPos": 3646,
+                          "endian": "LE"
+                        },
+                        {
+                          "ID": "denominator",
+                          "type": "UnsignedNumber",
+                          "bigValue": "1",
+                          "value": 1,
+                          "startPos": 3646,
+                          "endPos": 3650,
+                          "endian": "LE"
+                        }
+                      ]
+                    },
+                    {
+                      "ID": "YResolution",
+                      "type": "Compound",
+                      "interpretedValue": "96",
+                      "startPos": 3650,
+                      "endPos": 3658,
+                      "subRegions": [
+                        {
+                          "ID": "numerator",
+                          "type": "UnsignedNumber",
+                          "bigValue": "96",
+                          "value": 96,
+                          "startPos": 3650,
+                          "endPos": 3654,
+                          "endian": "LE"
+                        },
+                        {
+                          "ID": "denominator",
+                          "type": "UnsignedNumber",
+                          "bigValue": "1",
+                          "value": 1,
+                          "startPos": 3654,
+                          "endPos": 3658,
+                          "endian": "LE"
+                        }
+                      ]
+                    },
+                    {
+                      "ID": "Software",
+                      "type": "String",
+                      "value": "paint.net 5.0.13",
+                      "startPos": 3658,
+                      "endPos": 3675
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "ID": "ExifIFD",
+              "type": "Compound",
+              "interpretedValue": "",
+              "startPos": 3676,
+              "endPos": 3730,
+              "subRegions": [
+                {
+                  "ID": "Count",
+                  "type": "UnsignedNumber",
+                  "bigValue": "4",
+                  "value": 4,
+                  "startPos": 3676,
+                  "endPos": 3678,
+                  "endian": "LE"
+                },
+                {
+                  "ID": "Tag 0",
+                  "type": "Compound",
+                  "interpretedValue": "ExifVersion",
+                  "startPos": 3678,
+                  "endPos": 3690,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "36864",
+                      "value": 36864,
+                      "startPos": 3678,
+                      "endPos": 3680,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "7",
+                      "value": 7,
+                      "description": "",
+                      "startPos": 3680,
+                      "endPos": 3682,
+                      "endian": "LE",
+                      "interpretedValue": "UNDEFINED"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "4",
+                      "value": 4,
+                      "startPos": 3682,
+                      "endPos": 3686,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Data",
+                      "type": "GeneralData",
+                      "startPos": 3686,
+                      "endPos": 3690
+                    }
+                  ]
+                },
+                {
+                  "ID": "Tag 1",
+                  "type": "Compound",
+                  "interpretedValue": "ColorSpace",
+                  "startPos": 3690,
+                  "endPos": 3702,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "40961",
+                      "value": 40961,
+                      "startPos": 3690,
+                      "endPos": 3692,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "3",
+                      "value": 3,
+                      "description": "",
+                      "startPos": 3692,
+                      "endPos": 3694,
+                      "endian": "LE",
+                      "interpretedValue": "SHORT"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3694,
+                      "endPos": 3698,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Data",
+                      "type": "UnsignedNumber",
+                      "bigValue": "65535",
+                      "value": 65535,
+                      "startPos": 3698,
+                      "endPos": 3700,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Padding",
+                      "type": "GeneralData",
+                      "startPos": 3700,
+                      "endPos": 3702
+                    }
+                  ]
+                },
+                {
+                  "ID": "Tag 2",
+                  "type": "Compound",
+                  "interpretedValue": "ExifImageWidth",
+                  "startPos": 3702,
+                  "endPos": 3714,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "40962",
+                      "value": 40962,
+                      "startPos": 3702,
+                      "endPos": 3704,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "4",
+                      "value": 4,
+                      "description": "",
+                      "startPos": 3704,
+                      "endPos": 3706,
+                      "endian": "LE",
+                      "interpretedValue": "LONG"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3706,
+                      "endPos": 3710,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Data",
+                      "type": "UnsignedNumber",
+                      "bigValue": "222",
+                      "value": 222,
+                      "startPos": 3710,
+                      "endPos": 3714,
+                      "endian": "LE"
+                    }
+                  ]
+                },
+                {
+                  "ID": "Tag 3",
+                  "type": "Compound",
+                  "interpretedValue": "ExifImageHeight",
+                  "startPos": 3714,
+                  "endPos": 3726,
+                  "subRegions": [
+                    {
+                      "ID": "TagId",
+                      "type": "UnsignedNumber",
+                      "bigValue": "40963",
+                      "value": 40963,
+                      "startPos": 3714,
+                      "endPos": 3716,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "DataType",
+                      "type": "UnsignedNumber",
+                      "bigValue": "4",
+                      "value": 4,
+                      "description": "",
+                      "startPos": 3716,
+                      "endPos": 3718,
+                      "endian": "LE",
+                      "interpretedValue": "LONG"
+                    },
+                    {
+                      "ID": "DataCount",
+                      "type": "UnsignedNumber",
+                      "bigValue": "1",
+                      "value": 1,
+                      "startPos": 3718,
+                      "endPos": 3722,
+                      "endian": "LE"
+                    },
+                    {
+                      "ID": "Data",
+                      "type": "UnsignedNumber",
+                      "bigValue": "310",
+                      "value": 310,
+                      "startPos": 3722,
+                      "endPos": 3726,
+                      "endian": "LE"
+                    }
+                  ]
+                },
+                {
+                  "ID": "NextIFDOffset",
+                  "type": "UnsignedNumber",
+                  "bigValue": "0",
+                  "value": 0,
+                  "startPos": 3726,
+                  "endPos": 3730,
+                  "endian": "LE"
+                },
+                {
+                  "ID": "DataArea",
+                  "type": "Compound",
+                  "interpretedValue": "",
+                  "startPos": 3730,
+                  "endPos": 3730,
+                  "subRegions": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

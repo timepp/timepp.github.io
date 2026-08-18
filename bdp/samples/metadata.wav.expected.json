@@ -1,0 +1,402 @@
+{
+  "ID": "RIFF",
+  "type": "Compound",
+  "interpretedValue": "WAVE",
+  "startPos": 0,
+  "endPos": 345900,
+  "subRegions": [
+    {
+      "ID": "FourCC",
+      "type": "NullTerminatedString",
+      "value": "RIFF",
+      "startPos": 0,
+      "endPos": 4
+    },
+    {
+      "ID": "Size",
+      "type": "Size",
+      "bigValue": "345892",
+      "value": 345892,
+      "description": "RIFF chunk size",
+      "startPos": 4,
+      "endPos": 8,
+      "endian": "LE"
+    },
+    {
+      "ID": "FormType",
+      "type": "String",
+      "value": "WAVE",
+      "startPos": 8,
+      "endPos": 12
+    },
+    {
+      "ID": "fmt ",
+      "type": "Compound",
+      "interpretedValue": "fmt ",
+      "startPos": 12,
+      "endPos": 36,
+      "subRegions": [
+        {
+          "ID": "FourCC",
+          "type": "String",
+          "value": "fmt ",
+          "startPos": 12,
+          "endPos": 16
+        },
+        {
+          "ID": "Size",
+          "type": "Size",
+          "bigValue": "16",
+          "value": 16,
+          "description": "RIFF chunk size",
+          "startPos": 16,
+          "endPos": 20,
+          "endian": "LE"
+        },
+        {
+          "ID": "formatTag",
+          "type": "UnsignedNumber",
+          "bigValue": "1",
+          "value": 1,
+          "startPos": 20,
+          "endPos": 22,
+          "endian": "LE"
+        },
+        {
+          "ID": "channels",
+          "type": "Size",
+          "bigValue": "2",
+          "value": 2,
+          "startPos": 22,
+          "endPos": 24,
+          "endian": "LE"
+        },
+        {
+          "ID": "samplesPerSecond",
+          "type": "UnsignedNumber",
+          "bigValue": "44100",
+          "value": 44100,
+          "startPos": 24,
+          "endPos": 28,
+          "endian": "LE"
+        },
+        {
+          "ID": "avgBytesPerSecond",
+          "type": "UnsignedNumber",
+          "bigValue": "176400",
+          "value": 176400,
+          "startPos": 28,
+          "endPos": 32,
+          "endian": "LE"
+        },
+        {
+          "ID": "blockAlign",
+          "type": "UnsignedNumber",
+          "bigValue": "4",
+          "value": 4,
+          "startPos": 32,
+          "endPos": 34,
+          "endian": "LE"
+        },
+        {
+          "ID": "bitsPerSample",
+          "type": "UnsignedNumber",
+          "bigValue": "16",
+          "value": 16,
+          "startPos": 34,
+          "endPos": 36,
+          "endian": "LE"
+        }
+      ]
+    },
+    {
+      "ID": "data",
+      "type": "Compound",
+      "interpretedValue": "data",
+      "startPos": 36,
+      "endPos": 345752,
+      "subRegions": [
+        {
+          "ID": "FourCC",
+          "type": "String",
+          "value": "data",
+          "startPos": 36,
+          "endPos": 40
+        },
+        {
+          "ID": "Size",
+          "type": "Size",
+          "bigValue": "345708",
+          "value": 345708,
+          "description": "RIFF chunk size",
+          "startPos": 40,
+          "endPos": 44,
+          "endian": "LE"
+        },
+        {
+          "ID": "data",
+          "type": "GeneralData",
+          "startPos": 44,
+          "endPos": 345752
+        }
+      ]
+    },
+    {
+      "ID": "LIST",
+      "type": "Compound",
+      "interpretedValue": "LIST",
+      "startPos": 345752,
+      "endPos": 345900,
+      "subRegions": [
+        {
+          "ID": "FourCC",
+          "type": "String",
+          "value": "LIST",
+          "startPos": 345752,
+          "endPos": 345756
+        },
+        {
+          "ID": "Size",
+          "type": "Size",
+          "bigValue": "140",
+          "value": 140,
+          "description": "RIFF chunk size",
+          "startPos": 345756,
+          "endPos": 345760,
+          "endian": "LE"
+        },
+        {
+          "ID": "ListName",
+          "type": "String",
+          "value": "INFO",
+          "startPos": 345760,
+          "endPos": 345764
+        },
+        {
+          "ID": "IART",
+          "type": "Compound",
+          "interpretedValue": "IART",
+          "startPos": 345764,
+          "endPos": 345786,
+          "subRegions": [
+            {
+              "ID": "FourCC",
+              "type": "String",
+              "value": "IART",
+              "startPos": 345764,
+              "endPos": 345768
+            },
+            {
+              "ID": "Size",
+              "type": "Size",
+              "bigValue": "14",
+              "value": 14,
+              "description": "RIFF chunk size",
+              "startPos": 345768,
+              "endPos": 345772,
+              "endian": "LE"
+            },
+            {
+              "ID": "data",
+              "type": "GeneralData",
+              "startPos": 345772,
+              "endPos": 345786
+            }
+          ]
+        },
+        {
+          "ID": "ICMT",
+          "type": "Compound",
+          "interpretedValue": "ICMT",
+          "startPos": 345786,
+          "endPos": 345806,
+          "subRegions": [
+            {
+              "ID": "FourCC",
+              "type": "String",
+              "value": "ICMT",
+              "startPos": 345786,
+              "endPos": 345790
+            },
+            {
+              "ID": "Size",
+              "type": "Size",
+              "bigValue": "12",
+              "value": 12,
+              "description": "RIFF chunk size",
+              "startPos": 345790,
+              "endPos": 345794,
+              "endian": "LE"
+            },
+            {
+              "ID": "data",
+              "type": "GeneralData",
+              "startPos": 345794,
+              "endPos": 345806
+            }
+          ]
+        },
+        {
+          "ID": "ICRD",
+          "type": "Compound",
+          "interpretedValue": "ICRD",
+          "startPos": 345806,
+          "endPos": 345822,
+          "subRegions": [
+            {
+              "ID": "FourCC",
+              "type": "String",
+              "value": "ICRD",
+              "startPos": 345806,
+              "endPos": 345810
+            },
+            {
+              "ID": "Size",
+              "type": "Size",
+              "bigValue": "8",
+              "value": 8,
+              "description": "RIFF chunk size",
+              "startPos": 345810,
+              "endPos": 345814,
+              "endian": "LE"
+            },
+            {
+              "ID": "data",
+              "type": "GeneralData",
+              "startPos": 345814,
+              "endPos": 345822
+            }
+          ]
+        },
+        {
+          "ID": "IGNR",
+          "type": "Compound",
+          "interpretedValue": "IGNR",
+          "startPos": 345822,
+          "endPos": 345838,
+          "subRegions": [
+            {
+              "ID": "FourCC",
+              "type": "String",
+              "value": "IGNR",
+              "startPos": 345822,
+              "endPos": 345826
+            },
+            {
+              "ID": "Size",
+              "type": "Size",
+              "bigValue": "8",
+              "value": 8,
+              "description": "RIFF chunk size",
+              "startPos": 345826,
+              "endPos": 345830,
+              "endian": "LE"
+            },
+            {
+              "ID": "data",
+              "type": "GeneralData",
+              "startPos": 345830,
+              "endPos": 345838
+            }
+          ]
+        },
+        {
+          "ID": "INAM",
+          "type": "Compound",
+          "interpretedValue": "INAM",
+          "startPos": 345838,
+          "endPos": 345860,
+          "subRegions": [
+            {
+              "ID": "FourCC",
+              "type": "String",
+              "value": "INAM",
+              "startPos": 345838,
+              "endPos": 345842
+            },
+            {
+              "ID": "Size",
+              "type": "Size",
+              "bigValue": "14",
+              "value": 14,
+              "description": "RIFF chunk size",
+              "startPos": 345842,
+              "endPos": 345846,
+              "endian": "LE"
+            },
+            {
+              "ID": "data",
+              "type": "GeneralData",
+              "startPos": 345846,
+              "endPos": 345860
+            }
+          ]
+        },
+        {
+          "ID": "IPRD",
+          "type": "Compound",
+          "interpretedValue": "IPRD",
+          "startPos": 345860,
+          "endPos": 345882,
+          "subRegions": [
+            {
+              "ID": "FourCC",
+              "type": "String",
+              "value": "IPRD",
+              "startPos": 345860,
+              "endPos": 345864
+            },
+            {
+              "ID": "Size",
+              "type": "Size",
+              "bigValue": "14",
+              "value": 14,
+              "description": "RIFF chunk size",
+              "startPos": 345864,
+              "endPos": 345868,
+              "endian": "LE"
+            },
+            {
+              "ID": "data",
+              "type": "GeneralData",
+              "startPos": 345868,
+              "endPos": 345882
+            }
+          ]
+        },
+        {
+          "ID": "ITRK",
+          "type": "Compound",
+          "interpretedValue": "ITRK",
+          "startPos": 345882,
+          "endPos": 345900,
+          "subRegions": [
+            {
+              "ID": "FourCC",
+              "type": "String",
+              "value": "ITRK",
+              "startPos": 345882,
+              "endPos": 345886
+            },
+            {
+              "ID": "Size",
+              "type": "Size",
+              "bigValue": "10",
+              "value": 10,
+              "description": "RIFF chunk size",
+              "startPos": 345886,
+              "endPos": 345890,
+              "endian": "LE"
+            },
+            {
+              "ID": "data",
+              "type": "GeneralData",
+              "startPos": 345890,
+              "endPos": 345900
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
