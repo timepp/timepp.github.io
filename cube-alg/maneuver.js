@@ -1,6 +1,8 @@
 // tree structure
 // leaf: {description, note, maneuvers}
 // composite: no `maneuvers` property
+// Each maneuver may end with a // comment, displayed below its cube:
+// "R U R' U' // blabla"
 
 var maneuvers = {
     roofpig_conf: "flags=showalg",
@@ -128,9 +130,9 @@ var maneuvers = {
             maneuvers: ["R2 U' R2 U' R2 Dw R U R' B2 R U' R'"]
         },
         E: {
-            note: "初始化：R2 U R' U' y 中间：三组基本动作。其中收尾时有一个U' y' U就简化为y'了",
             maneuvers: [
-                "R2 U R' U' y R U R' U' R U R' U' R U R' y' R U' R2'"
+                "x' R U' R' D R U R' D' R U R' D R U' R' D' x",
+                "R2 U R' U' y R U R' U' R U R' U' R U R' y' R U' R2' // 初始化：R2 U R' U' y 中间：三组基本动作。其中收尾时有一个U' y' U就简化为y'了",
                 ]
         },
         J: {
@@ -140,11 +142,17 @@ var maneuvers = {
                 "L' U2' L U L' U2' R U' L U R'"
                 ]
         },
+        Ja: {
+            note: "放倒做，起手正手位，不用换手位，其实挺流畅的",
+            maneuvers: [
+                "z U' R D' R2 U R' U' R2 U D R'"
+            ]
+        },
         A: {
             note: "D2前都是跟的顺时针R。U都是先做逆时针再做顺时针。",
             maneuvers: [
-                "x' R2 D2 R' U' R D2 R' U R' x",
-                "x' R U' R D2 R' U R D2 R2 x"
+                "x' R2 D2 R' U' R D2 R' U R' x // Aa",
+                "x' R U' R D2 R' U R D2 R2 x // Ab"
             ]
         }
     },

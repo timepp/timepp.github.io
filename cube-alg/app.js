@@ -93,10 +93,20 @@ function createCase(c, path) {
                 .append($("<span class='note'>").text(c.note)));
     }
 
+    var $maneuvers = $("<div>").addClass("maneuver-list");
     for (var j in c.maneuvers) {
         var maneuver = c.maneuvers[j];
-        $div.append($("<div>").addClass("roofpig").attr("data-config", baseconf + "alg=" + maneuver));
+        var commentIndex = maneuver.indexOf("//");
+        var algorithm = commentIndex === -1 ? maneuver : maneuver.slice(0, commentIndex).trim();
+        var comment = commentIndex === -1 ? "" : maneuver.slice(commentIndex + 2).trim();
+        var $maneuver = $("<div>").addClass("maneuver");
+        $maneuver.append($("<div>").addClass("roofpig").attr("data-config", baseconf + "alg=" + algorithm));
+        if (comment) {
+            $maneuver.append($("<div>").addClass("maneuver-comment").text(comment));
+        }
+        $maneuvers.append($maneuver);
     }
+    $div.append($maneuvers);
 
     return createPanel($div, "border-info", path);
 }

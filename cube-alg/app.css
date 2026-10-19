@@ -2,8 +2,24 @@
     width: 200px;
     height: 200px;
     background: radial-gradient(#C0C0C0,#101010);
+}
+
+.maneuver-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.maneuver {
+    width: 200px;
     margin-bottom: 40px;
-    float: left;
+}
+
+.maneuver-comment {
+    margin-top: 8px;
+    color: #808080;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .clearboth {
